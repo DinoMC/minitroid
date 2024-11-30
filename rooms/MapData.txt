@@ -1,0 +1,3 @@
+$ln;Defaltia;Shadia;Renegia
+[0,0,0]
+0,0,0,0||0|Spawn_Hourglass_Room.tscn

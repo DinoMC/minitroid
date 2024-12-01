@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://bltl5fo08e823"]
 
 [ext_resource type="Script" path="res://SampleProject/Scripts/Game.gd" id="1_axhx4"]
-[ext_resource type="PackedScene" uid="uid://dut5tf2s87crm" path="res://Player.tscn" id="2_asqak"]
+[ext_resource type="PackedScene" uid="uid://ckng63detpg81" path="res://MovementSystemImport/Player.tscn" id="2_x143p"]
 [ext_resource type="PackedScene" uid="uid://dch8dyylb7526" path="res://addons/MetroidvaniaSystem/Template/Nodes/Minimap.tscn" id="3_u80s7"]
 [ext_resource type="Texture2D" uid="uid://wiq0mic5m6is" path="res://SampleProject/Sprites/Collectible.png" id="4_nxeni"]
 
@@ -108,7 +108,8 @@ func update():
 script = ExtResource("1_axhx4")
 starting_map = "Spawn_Hourglass_Room.tscn"
 
-[node name="Player" parent="." groups=["player"] instance=ExtResource("2_asqak")]
+[node name="Player" parent="." instance=ExtResource("2_x143p")]
+z_index = 1
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
 

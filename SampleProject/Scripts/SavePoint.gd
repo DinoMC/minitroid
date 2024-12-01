@@ -10,10 +10,16 @@ func _ready() -> void:
 func on_body_entered(body: Node2D) -> void:
 	if Time.get_ticks_msec() - start_time < 1000:
 		return # Small hack to prevent saving at the game start.
-	# Make Game save the data.
-	Game.get_singleton().save_game()
-	# Starting coords for the delta vector feature.
-	Game.get_singleton().reset_map_starting_coords()
+	if body.is_in_group("player"):
+		# Make Game save the data.
+		Game.get_singleton().save_game()
+		# Starting coords for the delta vector feature.
+		Game.get_singleton().reset_map_starting_coords()
+		# If carrying sand canisters, save them if at the hourglass.
+		if get_parent().get_meta("is_hourglass_room", false):
+			while body.tempabilities.size() > 0:
+				var newability = body.tempabilities.pop_back()
+				body.abilities.append(newability)
 
 func _draw() -> void:
 	# Draws the circle.

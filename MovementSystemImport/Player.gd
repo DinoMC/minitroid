@@ -25,6 +25,7 @@ extends CharacterBody2D
 @onready var DashGhost: = $"Graphics Effects/Dash/DashGhost"
 
 var abilities: Array[StringName]
+var tempabilities: Array[StringName]
 
 var reset_position: Vector2
 
@@ -98,6 +99,11 @@ var currentState = null
 var previousState = null
 var nextState = null
 
+# New Stuff
+var hurting = false
+var invulnerable = false
+var in_hurt_zone = false
+
 #endregion
 
 #region Game Loop Functions
@@ -132,6 +138,10 @@ func _physics_process(delta: float) -> void:
 	# Update squish
 	UpdateSquish()
 	
+	# Handle areas of damage
+	if in_hurt_zone && !invulnerable:
+		damage_player()
+	
 	# Handle State Changes
 	HandleStateChange()
 
@@ -149,6 +159,8 @@ func HorizontalMovement(acceleration: float = Acceleration, deceleration: float 
 	else:
 		velocity.x = move_toward(velocity.x, moveDirectionX * moveSpeed, deceleration)
 
+func HorizontalAutoMovement() -> void:
+	velocity.x = move_toward(velocity.x, 0.0, GroundDeceleration)
 
 func HandleFalling():
 	# See if we walked off a ledge
@@ -285,6 +297,7 @@ func ChangeState(targetState):
 
 
 func HandleStateChange():
+	if hurting: return
 	if (nextState != null):
 		if (currentState != nextState):
 			previousState = currentState
@@ -318,3 +331,18 @@ func HandleFlipH():
 func on_enter():
 	# Position for kill system. Assigned when entering new room (see Game.gd).
 	reset_position = position
+
+func start_hurt_timer() -> void:
+	$Timers/HurtStunTimer.start()
+
+func start_invul_timer() -> void:
+	$Timers/InvulTimer.start()
+
+func _on_hurt_stun_timer_timeout() -> void:
+	hurting = false
+
+func _on_invul_timer_timeout() -> void:
+	invulnerable = false
+
+func damage_player() -> void:
+	ChangeState(States.Locked)

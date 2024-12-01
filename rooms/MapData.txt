@@ -6,4 +6,6 @@ $ln;Defaltia;Shadia;Renegia
 [-1,0,0]
 0,0,-1,0|||1_left_corridor_to_code.tscn
 [-3,0,0]
-0,0,0,0||2|
+0,0,0,0||2|2_doorcode_room.tscn
+[1,0,0]
+0,0,0,0||3|3_sand_canister_one.tscn

@@ -21,6 +21,8 @@ var events: Array[String]
 # For Custom Runner integration.
 var custom_run: bool
 
+var temporarily_saved_ids: Array[StringName]
+
 func _ready() -> void:
 	# A trick for static object reference (before static vars were a thing).
 	get_script().set_meta(&"singleton", self)
@@ -62,6 +64,15 @@ func _ready() -> void:
 	reset_map_starting_coords.call_deferred()
 	# Add module for room transitions.
 	add_module("RoomTransitions.gd")
+	
+	var sandcanister_count = 0
+	
+	for ability in player.abilities:
+		if ability.contains("sandcanister"): sandcanister_count += 1
+	
+	const rewind_timer_maxes = [20, 60, 120, 240]
+	$UI/RewindTimer_HBoxContainer/RewindTimer.wait_time = rewind_timer_maxes[sandcanister_count]
+	$UI/RewindTimer_HBoxContainer/RewindTimer.start()
 
 # Returns this node from anywhere.
 static func get_singleton() -> Game:
@@ -83,3 +94,6 @@ func reset_map_starting_coords():
 func init_room():
 	MetSys.get_current_room_instance().adjust_camera_limits($Player/Camera2D)
 	player.on_enter()
+
+func _exit_tree() -> void:
+	get_singleton().save_game()

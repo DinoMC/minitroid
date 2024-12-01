@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://ci7w4ocj4ax0"]
+
+[ext_resource type="Script" path="res://scene_templates/scripts/damage_area_2d.gd" id="1_itj4x"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_um80g"]
+size = Vector2(96, 16)
+
+[node name="DamageArea2D" type="Area2D"]
+position = Vector2(576, 248)
+script = ExtResource("1_itj4x")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_um80g")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_exited" from="." to="." method="_on_body_exited"]

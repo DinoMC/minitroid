@@ -1,4 +1,4 @@
-[gd_scene load_steps=57 format=3 uid="uid://ckng63detpg81"]
+[gd_scene load_steps=60 format=3 uid="uid://ckng63detpg81"]
 
 [ext_resource type="Script" path="res://MovementSystemImport/Player.gd" id="1_gqhxu"]
 [ext_resource type="Texture2D" uid="uid://dg778rn43rj3u" path="res://art/sprites/player_animations/Voidster_Bash_R.png" id="2_q71fr"]
@@ -6,10 +6,10 @@
 [ext_resource type="Texture2D" uid="uid://eou82dra5a21" path="res://art/sprites/player_animations/Voidster_Damage_R.png" id="3_xcvxx"]
 [ext_resource type="Texture2D" uid="uid://cpi6t5b3r2cvp" path="res://art/sprites/player_animations/Voidster_Standing_R.png" id="4_5lfd2"]
 [ext_resource type="Script" path="res://MovementSystemImport/State Machine/LockedState.gd" id="4_jim0x"]
-[ext_resource type="Texture2D" uid="uid://bcb2umgslo2pi" path="res://art/sprites/player_animations/Voidster_Walk_R.png" id="5_hqjle"]
 [ext_resource type="Script" path="res://MovementSystemImport/State Machine/IdleState.gd" id="5_qbr2a"]
 [ext_resource type="Script" path="res://MovementSystemImport/State Machine/RunState.gd" id="6_7tyg0"]
 [ext_resource type="Texture2D" uid="uid://bsrs1ullakeil" path="res://art/sprites/player_animations/Voidster_Hang_R.png" id="6_k162j"]
+[ext_resource type="Texture2D" uid="uid://cfxjx1uugiy78" path="res://art/sprites/player_animations/Voidster_Run_R.png" id="6_sdbey"]
 [ext_resource type="Texture2D" uid="uid://drrkwaqnjaj5j" path="res://art/sprites/player_animations/Voidster_Wall_Jump_R.png" id="7_2lexo"]
 [ext_resource type="Script" path="res://MovementSystemImport/State Machine/JumpState.gd" id="7_r1eat"]
 [ext_resource type="Texture2D" uid="uid://cqlc8b557jj15" path="res://art/sprites/player_animations/Voidster_Jump_R.png" id="8_bcvqt"]
@@ -42,6 +42,14 @@ region = Rect2(96, 0, 32, 48)
 atlas = ExtResource("3_xcvxx")
 region = Rect2(0, 0, 32, 48)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_cnqgv"]
+atlas = ExtResource("3_xcvxx")
+region = Rect2(0, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sm1a2"]
+atlas = ExtResource("3_xcvxx")
+region = Rect2(32, 0, 32, 48)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_6gxdd"]
 atlas = ExtResource("4_5lfd2")
 region = Rect2(0, 0, 32, 48)
@@ -50,21 +58,21 @@ region = Rect2(0, 0, 32, 48)
 atlas = ExtResource("8_bcvqt")
 region = Rect2(0, 0, 32, 48)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_jd6kd"]
-atlas = ExtResource("5_hqjle")
-region = Rect2(0, 0, 32, 48)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_7goo7"]
-atlas = ExtResource("5_hqjle")
+[sub_resource type="AtlasTexture" id="AtlasTexture_moctw"]
+atlas = ExtResource("6_sdbey")
 region = Rect2(32, 0, 32, 48)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_rps8p"]
-atlas = ExtResource("5_hqjle")
+[sub_resource type="AtlasTexture" id="AtlasTexture_jvhxn"]
+atlas = ExtResource("6_sdbey")
 region = Rect2(64, 0, 32, 48)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_h73kn"]
-atlas = ExtResource("5_hqjle")
+[sub_resource type="AtlasTexture" id="AtlasTexture_8sd5a"]
+atlas = ExtResource("6_sdbey")
 region = Rect2(96, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4q7xe"]
+atlas = ExtResource("6_sdbey")
+region = Rect2(0, 0, 32, 48)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_olnbb"]
 atlas = ExtResource("6_k162j")
@@ -127,6 +135,17 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_cnqgv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sm1a2")
+}],
+"loop": false,
+"name": &"Hurt",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_6gxdd")
 }],
 "loop": true,
@@ -143,16 +162,16 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_jd6kd")
+"texture": SubResource("AtlasTexture_moctw")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_7goo7")
+"texture": SubResource("AtlasTexture_jvhxn")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_rps8p")
+"texture": SubResource("AtlasTexture_8sd5a")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_h73kn")
+"texture": SubResource("AtlasTexture_4q7xe")
 }],
 "loop": true,
 "name": &"Run",
@@ -528,10 +547,40 @@ tracks/1/keys = {
 "values": [&"WallSlide"]
 }
 
+[sub_resource type="Animation" id="Animation_4g3dw"]
+resource_name = "Hurt"
+length = 0.6
+step = 0.125
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"Hurt"]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.125, 0.25),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [0, 1, 0]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_7w2do"]
 _data = {
 "Dash": SubResource("Animation_hvj61"),
 "Fall": SubResource("Animation_5ksb1"),
+"Hurt": SubResource("Animation_4g3dw"),
 "Idle": SubResource("Animation_vog66"),
 "Jump": SubResource("Animation_3p2k2"),
 "RESET": SubResource("Animation_ypk8g"),
@@ -617,6 +666,14 @@ one_shot = true
 [node name="DashBuffer" type="Timer" parent="Timers"]
 one_shot = true
 
+[node name="HurtStunTimer" type="Timer" parent="Timers"]
+wait_time = 0.7
+one_shot = true
+
+[node name="InvulTimer" type="Timer" parent="Timers"]
+wait_time = 1.5
+one_shot = true
+
 [node name="Raycasts" type="Node2D" parent="."]
 
 [node name="WallJump" type="Node2D" parent="Raycasts"]
@@ -626,25 +683,25 @@ position = Vector2(-3.01, 12)
 target_position = Vector2(-3, 0)
 
 [node name="WallKickRight" type="RayCast2D" parent="Raycasts/WallJump"]
-position = Vector2(3.01, 12)
+position = Vector2(7.01, 12)
 target_position = Vector2(3, 0)
 
 [node name="WallClimb" type="Node2D" parent="Raycasts"]
 
 [node name="WallClimbTopLeft" type="RayCast2D" parent="Raycasts/WallClimb"]
-position = Vector2(-3.01, -12)
+position = Vector2(-3.01, -10)
 target_position = Vector2(-3, 0)
 
 [node name="WallClimbTopRight" type="RayCast2D" parent="Raycasts/WallClimb"]
-position = Vector2(3.01, -12)
+position = Vector2(7.01, -10)
 target_position = Vector2(3, 0)
 
 [node name="WallClimbLimitTopLeft" type="RayCast2D" parent="Raycasts/WallClimb"]
-position = Vector2(-3.01, -13)
+position = Vector2(-3.01, -11)
 target_position = Vector2(-3, 0)
 
 [node name="WallClimbLimitTopRight" type="RayCast2D" parent="Raycasts/WallClimb"]
-position = Vector2(3.01, -13)
+position = Vector2(7.01, -11)
 target_position = Vector2(3, 0)
 
 [node name="WallClimbLimitBottomLeft" type="RayCast2D" parent="Raycasts/WallClimb"]
@@ -652,7 +709,7 @@ position = Vector2(-3.01, 13)
 target_position = Vector2(-3, 0)
 
 [node name="WallClimbLimitBottomRight" type="RayCast2D" parent="Raycasts/WallClimb"]
-position = Vector2(3.01, 13)
+position = Vector2(7.01, 13)
 target_position = Vector2(3, 0)
 
 [node name="Graphics Effects" type="Node2D" parent="."]
@@ -667,3 +724,6 @@ speed_scale = 3.0
 texture = SubResource("AtlasTexture_ffyu2")
 gravity = Vector2(0, 0)
 color_ramp = SubResource("Gradient_cjw7l")
+
+[connection signal="timeout" from="Timers/HurtStunTimer" to="." method="_on_hurt_stun_timer_timeout"]
+[connection signal="timeout" from="Timers/InvulTimer" to="." method="_on_invul_timer_timeout"]

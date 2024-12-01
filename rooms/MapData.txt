@@ -1,3 +1,9 @@
 $ln;Defaltia;Shadia;Renegia
 [0,0,0]
-0,0,0,0||0|Spawn_Hourglass_Room.tscn
+2,0,1,0||0|Spawn_Hourglass_Room.tscn
+[-2,0,0]
+-1,0,1,0|||1_left_corridor_to_code.tscn
+[-1,0,0]
+0,0,-1,0|||1_left_corridor_to_code.tscn
+[-3,0,0]
+0,0,0,0||2|

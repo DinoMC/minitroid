@@ -20,6 +20,8 @@ func on_body_entered(body: Node2D) -> void:
 			while body.tempabilities.size() > 0:
 				var newability = body.tempabilities.pop_back()
 				body.abilities.append(newability)
+				if newability.contains("sandcanister"):
+					Game.get_singleton().item_popup("sandcanister_done")
 
 func _draw() -> void:
 	# Draws the circle.

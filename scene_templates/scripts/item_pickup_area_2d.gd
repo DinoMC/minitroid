@@ -13,4 +13,5 @@ func _on_body_entered(body: Node2D) -> void:
 			body.tempabilities.append(item_name)
 		else:
 			body.abilities.append(item_name)
+		Game.get_singleton().item_popup(item_name)
 		queue_free()

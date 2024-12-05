@@ -23,6 +23,9 @@ var custom_run: bool
 
 var temporarily_saved_ids: Array[StringName]
 
+@onready var rewind_timer : Timer = $UI/RewindTimer_HBoxContainer/RewindTimer
+@onready var fdb_rect : ColorRect = $UI/FadeToBlackColorRect
+
 func _ready() -> void:
 	# A trick for static object reference (before static vars were a thing).
 	get_script().set_meta(&"singleton", self)
@@ -70,9 +73,20 @@ func _ready() -> void:
 	for ability in player.abilities:
 		if ability.contains("sandcanister"): sandcanister_count += 1
 	
-	const rewind_timer_maxes = [20, 60, 120, 240]
+	const rewind_timer_maxes = [20, 40, 60, 80, 100]
 	$UI/RewindTimer_HBoxContainer/RewindTimer.wait_time = rewind_timer_maxes[sandcanister_count]
 	$UI/RewindTimer_HBoxContainer/RewindTimer.start()
+	$UI/RewindTimer_HBoxContainer.show()
+	
+	if "blastercode" in player.abilities && !"blaster" in player.abilities:
+		item_popup("blaster")
+		player.abilities.append("blaster")
+	if "walljumpcode" in player.abilities && !"walljump" in player.abilities:
+		item_popup("walljump")
+		player.abilities.append("walljump")
+	if "dashcode" in player.abilities && !"dash" in player.abilities:
+		item_popup("dash")
+		player.abilities.append("dash")
 
 # Returns this node from anywhere.
 static func get_singleton() -> Game:
@@ -97,3 +111,60 @@ func init_room():
 
 func _exit_tree() -> void:
 	get_singleton().save_game()
+
+
+func _on_rewind_timer_timeout() -> void:
+	player.trigger_death()
+
+var item_descriptions := {
+	"doorcode" : "Door Code acquired.
+\"5318008\"",
+	"sandcanister_one" : "Sand Canister 1 acquired.
+Try bringing it back to the hourglass.",
+	"sandcanister_two" : "Sand Canister 2 acquired.
+Don't forget to bring it to the hourglass.",
+	"blastercode": "Strange Code acquired.
+This might be useful later.",
+	"blaster" : "Blaster unlocked.
+The strange code unlocked your weapon!",
+	"hot_warning" : "WARNING!
+Reactor room too hot for current suit.",
+	"walljumpcode" : "Ascending Code acquired.
+You found the code to unlock another ability.",
+	"walljump" : "Wall Jump unlocked.
+You can now slide down and jump off walls.",
+	"dashcode" : "Speed Code acquired.
+You found the code to unlock another ability.",
+	"dash": "Dash unlocked!
+You can now dash, including vertically.",
+	"sandcanister_done": "You added sand in the hourglass!
+Starting next loop, it will last longer."
+
+}
+
+var unpausable = false
+
+func item_popup(itemname: String) -> void:
+	if itemname in item_descriptions:
+		#TODO: play tadada sound
+		$UI/PopupPanel/RichTextLabel.text = ""
+		$UI/PopupPanel.scale.y = 0.0
+		$UI/PopupPanel.show()
+		var tween = get_tree().create_tween()
+		tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+		$UI/PopupPanel/RichTextLabel.text = ""
+		get_tree().paused = true
+		tween.tween_property($UI/PopupPanel, "scale:y", 1.0, 0.5)
+		tween.tween_property($UI/PopupPanel/RichTextLabel, "text", "[center]"+item_descriptions[itemname]+"[/center]", 0.01)
+		tween.tween_interval(1.0)
+		tween.tween_property(self, "unpausable", true, 0.01)
+
+func _physics_process(delta: float) -> void:
+	if unpausable && (Input.is_action_just_pressed("Jump") || Input.is_action_just_pressed("Shoot")):
+		unpausable = false
+		var tween = get_tree().create_tween()
+		tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+		$UI/PopupPanel/RichTextLabel.text = ""
+		get_tree().paused = false
+		tween.tween_property($UI/PopupPanel, "scale:y", 0.0, 0.5)
+		tween.tween_property($UI/PopupPanel, "visible", false, 0.01)

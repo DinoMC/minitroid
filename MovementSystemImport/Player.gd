@@ -4,7 +4,7 @@ extends CharacterBody2D
 
 # Nodes
 @onready var Sprite = $Sprite
-@onready var Animator = $Animator
+@onready var Animator = $Sprite
 @onready var Collider = $Collider
 @onready var States = $StateMachine
 
@@ -39,7 +39,7 @@ const AirDeceleration = 20
 const GravityJump = 600
 const GravityFall = 700
 const MaxFallVelocity = 700
-const JumpVelocity = -240
+const JumpVelocity = -280
 const VariableJumpMultiplier = 0.5
 const MaxJumps = 1
 const CoyoteTime = 0.1 # 6 Frames: FPS / (desired frames) = Time in seconds
@@ -89,8 +89,10 @@ var keyUp = false
 var keyDown = false
 var keyLeft = false
 var keyRight = false
+var keyLock = false
 var keyJump = false
 var keyJumpPressed = false
+var keyDropDown = false
 var keyClimb = false
 var keyDash = false
 
@@ -103,10 +105,27 @@ var nextState = null
 var hurting = false
 var invulnerable = false
 var in_hurt_zone = false
+var default_damage := 5
+var current_hurtzone_damage := 5
 
 #endregion
 
+var dying = false
+var rewinding = false
+var saving_rewind = true
+var rewind_values = {
+	"position" : [],
+	"animation" : [],
+	"frame" : [],
+	"MetSysposition" : [],
+	"flip_h" : []
+}
+var frame_count := 0
+var MetSysposition : Vector3i
+
 #region Game Loop Functions
+
+var blaster := false
 
 func _ready():
 	# Initialize the state machine
@@ -119,6 +138,8 @@ func _ready():
 	#Set some important variables
 	CoyoteTimer.one_shot = true
 	JumpBufferTimer.one_shot = true
+	
+	MetSys.room_changed.connect(_on_room_changed, CONNECT_DEFERRED)
 
 
 func _draw():
@@ -126,38 +147,108 @@ func _draw():
 
 
 func _physics_process(delta: float) -> void:
-	# Get input states
-	GetInputStates()
-	
-	# Update the current state
-	currentState.Update(delta)
-	HandleMaxFallVelocity()
-	# Commit movement
-	move_and_slide()
-	
-	# Update squish
-	UpdateSquish()
-	
-	# Handle areas of damage
-	if in_hurt_zone && !invulnerable:
-		damage_player()
-	
-	# Handle State Changes
-	HandleStateChange()
+	if !rewinding:
+		
+		if !blaster && "blaster" in abilities:
+			blaster = true
+		
+		# Get input states
+		GetInputStates()
+		
+		if keyDropDown:
+			set_collision_mask_value(4, false)
+		
+		if Input.is_action_just_pressed("Shoot"):
+			ShootBlaster()
+		
+		# Update the current state
+		currentState.Update(delta)
+		HandleMaxFallVelocity()
+		# Commit movement
+		move_and_slide()
+		
+		# Update squish
+		UpdateSquish()
+		
+		# Handle areas of damage
+		if in_hurt_zone && !invulnerable:
+			damage_player()
+			
+		if saving_rewind:
+			if frame_count == 0:
+				if rewind_values["position"].size() > 240:
+					for key in rewind_values.keys():
+						rewind_values[key].pop_front()
+				
+				rewind_values["position"].append(global_position)
+				rewind_values["animation"].append($Sprite.animation)
+				rewind_values["frame"].append($Sprite.frame)
+				rewind_values["MetSysposition"].append(MetSys.last_player_position)
+				rewind_values["flip_h"].append(Sprite.flip_h)
+				MetSysposition = MetSys.last_player_position
+			frame_count += 1
+			if frame_count >= 2: frame_count = 0
+		
+		# Handle aiming direction
+		HandleAim()
+		
+		# Handle State Changes
+		HandleStateChange()
+		
+		if keyDropDown:
+			await get_tree().create_timer(0.25).timeout
+			set_collision_mask_value(4, true)
+		
+	else:
+		if frame_count == 0:
+			global_position = rewind_values["position"].pop_back()
+			$Sprite.animation = rewind_values["animation"].pop_back()
+			$Sprite.frame = rewind_values["frame"].pop_back()
+			$Sprite.flip_h = rewind_values["flip_h"].pop_back()
+			var temp = rewind_values["MetSysposition"].pop_back() 
+			if temp != MetSysposition:
+				MetSys.visit_cell(temp)
+				MetSys.cell_changed.emit(temp)
+			if rewind_values["position"].is_empty(): rewinding = false
+		frame_count += 1
+		if frame_count >= 2: frame_count = 0
 
 
 #endregion
 
+func trigger_rewind() -> void:
+	frame_count = 0
+	rewinding = true
+	var tween = get_tree().create_tween()
+	tween.set_ease(Tween.EASE_IN_OUT)
+	tween.set_trans(Tween.TRANS_CUBIC)
+	tween.tween_interval(0.5)
+	tween.tween_property(Game.get_singleton().fdb_rect, "self_modulate:a", 1.0, 5.0)
+	tween.tween_callback(trigger_restart)
+
+func trigger_death() -> void:
+	dying = true
+	ChangeState(States.LockedDeath)
+	velocity = Vector2.ZERO
+	$Collider.set_deferred("disabled", true)
+	await get_tree().create_timer(1.25).timeout
+	trigger_rewind()
+	
+func trigger_restart() -> void:
+	get_tree().reload_current_scene()
 
 #region Player Functions
 
 
 func HorizontalMovement(acceleration: float = Acceleration, deceleration: float = Deceleration):
 	moveDirectionX = Input.get_axis("Left", "Right")
+	if dying: moveDirectionX = 0
+	var targetSpeed = moveDirectionX * moveSpeed
+	if keyLock: targetSpeed = 0
 	if (moveDirectionX != 0):
-		velocity.x = move_toward(velocity.x, moveDirectionX * moveSpeed, acceleration)
+		velocity.x = move_toward(velocity.x, targetSpeed, acceleration)
 	else:
-		velocity.x = move_toward(velocity.x, moveDirectionX * moveSpeed, deceleration)
+		velocity.x = move_toward(velocity.x, targetSpeed, deceleration)
 
 func HorizontalAutoMovement() -> void:
 	velocity.x = move_toward(velocity.x, 0.0, GroundDeceleration)
@@ -180,13 +271,15 @@ func HandleJumpBuffer():
 
 
 func HandleGravity(delta, gravity: float = GravityJump):
-	velocity.y += gravity * delta
+	if !dying:
+		velocity.y += gravity * delta
 
 
 func HandleJump():
 	# Handle jump
 	if (is_on_floor()):
 		if (jumps < MaxJumps):
+			#if JumpBufferTimer.time_left > 0 : breakpoint
 			if (keyJumpPressed or JumpBufferTimer.time_left > 0):
 				jumps += 1
 				JumpBufferTimer.stop()
@@ -214,12 +307,14 @@ func HandleLanding():
 
 
 func HandleWallJump():
+	if !abilities.has("walljump"): return
 	GetWallDirection()
 	if ((keyJumpPressed or (JumpBufferTimer.time_left > 0)) and (wallDirection != Vector2.ZERO)):
 		ChangeState(States.WallJump)
 
 
 func HandleWallSlide():
+	if !abilities.has("walljump"): return
 	if (((wallDirection == Vector2.LEFT and keyLeft) and (RCWallClimbLeft.is_colliding() and RCWallKickLeft.is_colliding()))
 		or ((wallDirection == Vector2.RIGHT and keyRight) and (RCWallClimbRight.is_colliding() and RCWallKickRight.is_colliding()))):
 			if (!keyJump):
@@ -227,6 +322,7 @@ func HandleWallSlide():
 
 
 func HandleWallGrab():
+	if !abilities.has("walljump"): return
 	GetCanWallClimb()
 	if (wallClimbDirection != Vector2.ZERO):
 		if (keyClimb and (climbStamina > 0)):
@@ -257,6 +353,7 @@ func GetCanWallClimb():
 
 
 func HandleDash():
+	if !abilities.has("dash") : return
 	if (dashes < MaxDashes):
 		if (keyDash):
 			if (DashTimer.time_left <= 0):
@@ -276,22 +373,39 @@ func GetDashDirection() -> Vector2:
 
 
 func GetInputStates():
-	keyUp = Input.is_action_pressed("Up")
-	keyDown = Input.is_action_pressed("Down")
-	keyLeft = Input.is_action_pressed("Left")
-	keyRight = Input.is_action_pressed("Right")
-	keyJump = Input.is_action_pressed("Jump")
-	keyJumpPressed = Input.is_action_just_pressed("Jump")
-	keyClimb = Input.is_action_pressed("Climb")
-	keyDash = Input.is_action_just_pressed("Dash")
-	
-	if (keyLeft): facing = -1
-	if (keyRight): facing = 1
-	# Handle the sprite x-scale
-	Sprite.flip_h = (facing < 0)
+	if !dying:
+		keyUp = Input.is_action_pressed("Up")
+		keyDown = Input.is_action_pressed("Down")
+		keyLeft = Input.is_action_pressed("Left")
+		keyRight = Input.is_action_pressed("Right")
+		keyLock = Input.is_action_pressed("Lock In Place")
+		keyJump = Input.is_action_pressed("Jump") # && (!Input.is_action_pressed("Down") || !is_on_floor())
+		keyJumpPressed = Input.is_action_just_pressed("Jump") # && (!Input.is_action_pressed("Down") || !is_on_floor())
+		keyDropDown = Input.is_action_just_pressed("Jump") && (Input.is_action_pressed("Down") && is_on_floor())
+		keyClimb = Input.is_action_pressed("Climb")
+		keyDash = Input.is_action_just_pressed("Dash")
+		
+		if (keyLeft): facing = -1
+		if (keyRight): facing = 1
+		# Handle the sprite x-scale
+		Sprite.flip_h = (facing < 0)
+	else:
+		keyUp = false
+		keyDown = false
+		keyLeft = false
+		keyRight = false
+		keyLock = false
+		keyJump = false
+		keyJumpPressed = false
+		keyDropDown = false
+		keyClimb = false
+		keyDash = false
 
 
+var test = 0
 func ChangeState(targetState):
+	if targetState == States.Idle && nextState == States.Jump: return
+	if dying && targetState != States.LockedDeath: return
 	if (targetState):
 		nextState = targetState
 
@@ -299,6 +413,7 @@ func ChangeState(targetState):
 func HandleStateChange():
 	if hurting: return
 	if (nextState != null):
+		#print ("changing state to : " + nextState.Name)
 		if (currentState != nextState):
 			previousState = currentState
 			currentState.ExitState()
@@ -344,5 +459,55 @@ func _on_hurt_stun_timer_timeout() -> void:
 func _on_invul_timer_timeout() -> void:
 	invulnerable = false
 
+func try_damage_player() -> void:
+	if !invulnerable:
+		damage_player()
+
 func damage_player() -> void:
 	ChangeState(States.Locked)
+
+var direction = ""
+var degrees = 0
+
+func HandleAim() -> void:
+	var angle = Input.get_vector("Left", "Right", "Down", "Up", 0.3)
+	if angle == Vector2.ZERO: 
+		if $Sprite.flip_h: angle = Vector2.LEFT
+		else: angle = Vector2.RIGHT
+	degrees = rad_to_deg(angle.angle())
+	degrees = round(degrees / 45) * 45
+	direction = ""
+	if degrees == 90: direction = "up"
+	elif degrees == 45 || degrees == 135: direction = "upright"
+	elif degrees == -45 || degrees == -135: direction = "downright"
+	elif degrees == -90: direction = "down"
+
+@onready var spawn_points = {
+	"0": $ShootEmitters/Right,
+	"45": $ShootEmitters/UpRight,
+	"90": $ShootEmitters/Up,
+	"-45": $ShootEmitters/DownRight,
+	"-90": $ShootEmitters/Down,
+	"135": $ShootEmitters/UpLeft,
+	"-135": $ShootEmitters/DownLeft,
+	"180": $ShootEmitters/Left,
+	"-180": $ShootEmitters/Left
+}
+
+func ShootBlaster() -> void:
+	if !blaster: return
+	if $Timers/ShootCDTimer.time_left > 0: return
+	$Timers/ShootCDTimer.start()
+	var projectile = preload("res://scene_templates/projectile.tscn").instantiate()
+	projectile.angle = degrees * -1.0
+	var spawn_point = $ShootEmitters/Right
+	var key = str(degrees)
+	if spawn_points.has(key): 
+		spawn_point = spawn_points[key]
+	projectile.position = spawn_point.global_position
+	Game.get_singleton().add_child(projectile)
+
+func _on_room_changed(_target_room: String) -> void:
+	invulnerable = true
+	var tween = get_tree().create_tween()
+	tween.tween_property(self, "invulnerable", false, 0.15)

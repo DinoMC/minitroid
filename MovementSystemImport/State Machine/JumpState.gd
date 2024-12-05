@@ -22,7 +22,17 @@ func Update(delta: float):
 
 
 func HandleAnimations():
-	Player.Animator.play("Jump")
+	var anim = "Jump"
+	var extension = ""
+	if !Player.abilities.has("blaster"): extension = "_down"
+	elif Player.direction != "" : extension = "_"+Player.direction
+	if !Player.Animator.animation.contains(anim):
+		Player.Animator.play(anim + extension)
+	elif anim + extension != Player.Animator.animation:
+		var frame = Player.Animator.frame
+		var progress = Player.Animator.frame_progress
+		Player.Animator.animation = anim + extension
+		Player.Animator.set_frame_and_progress(frame, progress)
 	Player.HandleFlipH()
 
 

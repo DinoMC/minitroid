@@ -1,0 +1,115 @@
+[gd_scene load_steps=15 format=3 uid="uid://yf0bggpve3e5"]
+
+[ext_resource type="Script" path="res://scene_templates/scripts/projectile.gd" id="1_168bw"]
+[ext_resource type="Texture2D" uid="uid://b6ao6kqqw3p0x" path="res://art/sprites/Blaster.png" id="1_kunfp"]
+[ext_resource type="Texture2D" uid="uid://6xddhaix4xj2" path="res://art/sprites/Dark_Energy_Burst.png" id="2_wus1o"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gihjm"]
+atlas = ExtResource("1_kunfp")
+region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x4evh"]
+atlas = ExtResource("1_kunfp")
+region = Rect2(8, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3i86g"]
+atlas = ExtResource("1_kunfp")
+region = Rect2(16, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_awth2"]
+atlas = ExtResource("1_kunfp")
+region = Rect2(24, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_i8tk2"]
+atlas = ExtResource("2_wus1o")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tpvcv"]
+atlas = ExtResource("2_wus1o")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_exy8y"]
+atlas = ExtResource("2_wus1o")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lg35e"]
+atlas = ExtResource("2_wus1o")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_k3ddj"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gihjm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x4evh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3i86g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_awth2")
+}],
+"loop": true,
+"name": &"default",
+"speed": 16.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_i8tk2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tpvcv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_exy8y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lg35e")
+}, {
+"duration": 1.0,
+"texture": null
+}],
+"loop": false,
+"name": &"die",
+"speed": 12.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_pxy8l"]
+radius = 3.5
+height = 9.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ic6gy"]
+size = Vector2(3, 3)
+
+[node name="Projectile" type="CharacterBody2D"]
+process_mode = 1
+collision_layer = 0
+collision_mask = 6
+script = ExtResource("1_168bw")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_k3ddj")
+autoplay = "default"
+
+[node name="Area2D" type="Area2D" parent="AnimatedSprite2D"]
+physics_interpolation_mode = 1
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AnimatedSprite2D/Area2D"]
+position = Vector2(0.5, -0.5)
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_pxy8l")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0.5, -0.5)
+shape = SubResource("RectangleShape2D_ic6gy")
+
+[node name="ExpireTimer" type="Timer" parent="."]
+one_shot = true
+autostart = true
+
+[connection signal="body_entered" from="AnimatedSprite2D/Area2D" to="." method="_on_area_2d_body_entered"]
+[connection signal="timeout" from="ExpireTimer" to="." method="_on_expire_timer_timeout"]

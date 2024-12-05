@@ -1,0 +1,85 @@
+[gd_scene load_steps=12 format=3 uid="uid://d1l2b1kuvf78v"]
+
+[ext_resource type="Script" path="res://scene_templates/scripts/vomit.gd" id="1_w7bi1"]
+[ext_resource type="Texture2D" uid="uid://0to74ky302iv" path="res://art/sprites/enemies/Vom_Vomit.png" id="2_slwld"]
+[ext_resource type="Texture2D" uid="uid://f4vwt8vgy7dj" path="res://art/sprites/enemies/Vomit_Splash.png" id="3_ndmt2"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oplmw"]
+atlas = ExtResource("2_slwld")
+region = Rect2(0, 0, 8, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2ndbf"]
+atlas = ExtResource("2_slwld")
+region = Rect2(8, 0, 8, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_14jfv"]
+atlas = ExtResource("3_ndmt2")
+region = Rect2(0, 0, 24, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cqhcv"]
+atlas = ExtResource("3_ndmt2")
+region = Rect2(24, 0, 24, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5ym7g"]
+atlas = ExtResource("3_ndmt2")
+region = Rect2(48, 0, 24, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0tqmx"]
+atlas = ExtResource("3_ndmt2")
+region = Rect2(72, 0, 24, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ah47u"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oplmw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2ndbf")
+}],
+"loop": true,
+"name": &"default",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_14jfv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cqhcv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5ym7g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0tqmx")
+}, {
+"duration": 1.0,
+"texture": null
+}],
+"loop": false,
+"name": &"die",
+"speed": 8.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_qsoxw"]
+radius = 3.0
+
+[node name="VomitBody2D" type="RigidBody2D"]
+collision_layer = 0
+collision_mask = 17
+continuous_cd = 1
+contact_monitor = true
+max_contacts_reported = 1
+script = ExtResource("1_w7bi1")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_ah47u")
+autoplay = "default"
+frame_progress = 0.0821294
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 5)
+shape = SubResource("CircleShape2D_qsoxw")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

@@ -33,7 +33,7 @@ tile_set = ExtResource("2_ybf2f")
 [node name="ItemPickup_Area2D" type="Area2D" parent="."]
 position = Vector2(240, 144)
 script = ExtResource("3_v7cwj")
-item_name = "sandcanister_1"
+item_name = "sandcanister_one"
 
 [node name="Sprite2D" type="Sprite2D" parent="ItemPickup_Area2D"]
 position = Vector2(2, -2)

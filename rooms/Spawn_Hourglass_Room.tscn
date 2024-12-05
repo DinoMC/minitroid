@@ -114,6 +114,7 @@ tile_set = ExtResource("3_t3k8v")
 
 [node name="Door_StaticBody2D" type="StaticBody2D" parent="."]
 position = Vector2(472, 200)
+collision_layer = 4
 script = SubResource("GDScript_x206p")
 metadata/_edit_group_ = true
 

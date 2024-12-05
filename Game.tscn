@@ -1,10 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://bltl5fo08e823"]
+[gd_scene load_steps=10 format=3 uid="uid://bltl5fo08e823"]
 
 [ext_resource type="Script" path="res://SampleProject/Scripts/Game.gd" id="1_axhx4"]
 [ext_resource type="PackedScene" uid="uid://ckng63detpg81" path="res://MovementSystemImport/Player.tscn" id="2_x143p"]
 [ext_resource type="PackedScene" uid="uid://dch8dyylb7526" path="res://addons/MetroidvaniaSystem/Template/Nodes/Minimap.tscn" id="3_u80s7"]
 [ext_resource type="Texture2D" uid="uid://wiq0mic5m6is" path="res://SampleProject/Sprites/Collectible.png" id="4_nxeni"]
 [ext_resource type="Script" path="res://script_templates/rewind_timer.gd" id="5_glw37"]
+[ext_resource type="FontFile" uid="uid://dklmhi5ksn2l" path="res://art/fonts/metroid-fusion.ttf" id="6_0etqd"]
 
 [sub_resource type="GDScript" id="GDScript_u7odr"]
 resource_name = "MapWindow"
@@ -57,18 +58,28 @@ func _draw() -> void:
 		draw_set_transform(current_pos, start_pos.angle_to_point(current_pos), Vector2.ONE)
 		draw_primitive([Vector2(-arrow_size, -arrow_size), Vector2(arrow_size, 0), Vector2(-arrow_size, arrow_size)], [Color.WHITE], [])
 
-func _input(event: InputEvent) -> void:
-	if event is InputEventKey:
-		if event.pressed:
-			# Toggle visibility when pressing M.
-			if event.keycode == KEY_M:
-				visible = not visible
-				if visible:
-					update_offset()
-			elif event.keycode == KEY_D:
+func _physics_process(delta: float) -> void:
+	if Input.is_action_just_pressed(\"Open Map\"):
+		visible = not visible
+		if visible:
+			update_offset()
+			get_tree().paused = true
+		else:
+			get_tree().paused = false
+		
+
+#func _input(event: InputEvent) -> void:
+	#if event is InputEventKey:
+		#if event.pressed:
+			## Toggle visibility when pressing M.
+			#if event.keycode == KEY_M:
+				#visible = not visible
+				#if visible:
+					#update_offset()
+			#elif event.keycode == KEY_D:
 				# D toggles position tracking (delta vector).
-				show_delta = not show_delta
-				queue_redraw()
+				#show_delta = not show_delta
+				#queue_redraw()
 
 func update_offset():
 	# Update the map offset based on the current position.
@@ -105,11 +116,20 @@ func update():
 		text = \"%03d%%\" % int(MetSys.get_explored_ratio() * 100)
 "
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fm8eh"]
+bg_color = Color(0.266667, 0.0509804, 0.482353, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
 [node name="Game" type="Node2D"]
+process_mode = 3
 script = ExtResource("1_axhx4")
 starting_map = "Spawn_Hourglass_Room.tscn"
 
 [node name="Player" parent="." groups=["player"] instance=ExtResource("2_x143p")]
+process_mode = 1
 z_index = 1
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
@@ -139,17 +159,12 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="MapWindow" type="Panel" parent="UI"]
+process_mode = 3
 visible = false
 clip_contents = true
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -240.0
-offset_top = -160.0
-offset_right = 240.0
-offset_bottom = 160.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = SubResource("GDScript_u7odr")
@@ -162,6 +177,7 @@ text = "0%"
 script = SubResource("GDScript_66suq")
 
 [node name="Label" type="Label" parent="UI/MapWindow"]
+visible = false
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -191,6 +207,8 @@ text = "0"
 vertical_alignment = 1
 
 [node name="RewindTimer_HBoxContainer" type="HBoxContainer" parent="UI"]
+process_mode = 1
+visible = false
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
@@ -203,6 +221,7 @@ script = ExtResource("5_glw37")
 [node name="Minutes" type="RichTextLabel" parent="UI/RewindTimer_HBoxContainer"]
 layout_mode = 2
 mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource("6_0etqd")
 text = "00"
 fit_content = true
 autowrap_mode = 0
@@ -210,6 +229,7 @@ autowrap_mode = 0
 [node name="separator" type="RichTextLabel" parent="UI/RewindTimer_HBoxContainer"]
 layout_mode = 2
 mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource("6_0etqd")
 text = ":"
 fit_content = true
 autowrap_mode = 0
@@ -217,6 +237,7 @@ autowrap_mode = 0
 [node name="Seconds" type="RichTextLabel" parent="UI/RewindTimer_HBoxContainer"]
 layout_mode = 2
 mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource("6_0etqd")
 text = "20"
 fit_content = true
 autowrap_mode = 0
@@ -224,3 +245,41 @@ autowrap_mode = 0
 [node name="RewindTimer" type="Timer" parent="UI/RewindTimer_HBoxContainer"]
 wait_time = 20.0
 one_shot = true
+
+[node name="PopupPanel" type="Panel" parent="UI"]
+visible = false
+custom_minimum_size = Vector2(0, 48)
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 64.0
+offset_bottom = 116.0
+grow_horizontal = 2
+scale = Vector2(1, 1e-05)
+size_flags_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_fm8eh")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="UI/PopupPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_fonts/normal_font = ExtResource("6_0etqd")
+bbcode_enabled = true
+text = "[center]Door Code acquired.
+\"5318008\"[/center]"
+
+[node name="FadeToBlackColorRect" type="ColorRect" parent="UI"]
+self_modulate = Color(1, 1, 1, 0)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[connection signal="timeout" from="UI/RewindTimer_HBoxContainer/RewindTimer" to="." method="_on_rewind_timer_timeout"]

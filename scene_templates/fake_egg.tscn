@@ -1,0 +1,65 @@
+[gd_scene load_steps=10 format=3 uid="uid://k7yipn8uakd2"]
+
+[ext_resource type="Script" path="res://scene_templates/scripts/base_enemy_script.gd" id="1_oe4gm"]
+[ext_resource type="Texture2D" uid="uid://id7mkcxa0ade" path="res://art/sprites/egg.png" id="2_bi0u0"]
+[ext_resource type="Texture2D" uid="uid://c4ra78yv2j2vc" path="res://art/sprites/Green_Blood_Splash.png" id="3_01j76"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tt7ua"]
+atlas = ExtResource("3_01j76")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_35v62"]
+atlas = ExtResource("3_01j76")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_te8jn"]
+atlas = ExtResource("3_01j76")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_npufd"]
+atlas = ExtResource("3_01j76")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_c1ca3"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": null
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tt7ua")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_35v62")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_te8jn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_npufd")
+}, {
+"duration": 1.0,
+"texture": null
+}],
+"loop": false,
+"name": &"die",
+"speed": 8.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hiavh"]
+size = Vector2(16, 16)
+
+[node name="EggBody2D_1" type="CharacterBody2D"]
+collision_layer = 6
+script = ExtResource("1_oe4gm")
+
+[node name="EggSprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_bi0u0")
+
+[node name="eggsplosionAnimatedSprite2D" type="AnimatedSprite2D" parent="EggSprite2D"]
+z_index = 1
+sprite_frames = SubResource("SpriteFrames_c1ca3")
+animation = &"die"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_hiavh")

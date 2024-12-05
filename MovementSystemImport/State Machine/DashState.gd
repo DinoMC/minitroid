@@ -8,6 +8,10 @@ func EnterState():
 	Name = "Dash"
 	OS.delay_msec(Player.DashDelayEffect)
 	Player.dashDirection = Player.GetDashDirection()
+	if Player.Sprite.flip_h:
+		Player.DashGhost.texture.region.position.x = 32
+	else:
+		Player.DashGhost.texture.region.position.x = 0
 	Player.DashGhost.restart()
 	Player.velocity = Player.dashDirection.normalized() * Player.DashSpeed
 	Player.DashTimer.start(Player.DashTime)

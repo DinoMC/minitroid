@@ -1,0 +1,14 @@
+[gd_scene load_steps=4 format=3 uid="uid://dbq1u6s1iha5o"]
+
+[ext_resource type="PackedScene" uid="uid://cbb0p03exlhrk" path="res://Menus/scenes/menus/options_menu/mini_options_menu.tscn" id="1_om32q"]
+[ext_resource type="Script" path="res://Menus/scenes/menus/options_menu/mini_options_menu_with_reset.gd" id="2_8pd6m"]
+[ext_resource type="PackedScene" uid="uid://cgtj8yu5qjtn4" path="res://Menus/scenes/menus/options_menu/game/reset_game_control/reset_game_control.tscn" id="3_qu2ef"]
+
+[node name="MiniOptionsMenu" instance=ExtResource("1_om32q")]
+script = ExtResource("2_8pd6m")
+
+[node name="ResetGameControl" parent="." index="3" instance=ExtResource("3_qu2ef")]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[connection signal="reset_confirmed" from="ResetGameControl" to="." method="_on_reset_game_control_reset_confirmed"]

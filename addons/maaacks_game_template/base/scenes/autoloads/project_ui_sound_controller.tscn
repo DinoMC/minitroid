@@ -1,0 +1,16 @@
+[gd_scene load_steps=5 format=3 uid="uid://cc37235kj4384"]
+
+[ext_resource type="Script" path="res://addons/maaacks_game_template/base/scripts/ui_sound_controller.gd" id="1_dmagn"]
+[ext_resource type="AudioStream" uid="uid://cwna2jq4e3c51" path="res://art/sounds/UI01.ogg" id="2_or1y1"]
+[ext_resource type="AudioStream" uid="uid://djwtdicn0a0ph" path="res://art/sounds/UI04.ogg" id="3_f3o30"]
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_065v8"]
+random_pitch = 1.05
+streams_count = 2
+stream_0/stream = ExtResource("2_or1y1")
+stream_1/stream = ExtResource("3_f3o30")
+
+[node name="ProjectUISoundController" type="Node"]
+script = ExtResource("1_dmagn")
+button_pressed = SubResource("AudioStreamRandomizer_065v8")
+tab_changed = SubResource("AudioStreamRandomizer_065v8")

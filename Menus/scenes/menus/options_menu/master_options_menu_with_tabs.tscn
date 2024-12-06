@@ -1,0 +1,41 @@
+[gd_scene load_steps=8 format=3 uid="uid://bytu577k32qla"]
+
+[ext_resource type="PackedScene" uid="uid://rplcttb3faic" path="res://Menus/scenes/menus/options_menu/master_options_menu.tscn" id="1_mltu3"]
+[ext_resource type="FontFile" uid="uid://dklmhi5ksn2l" path="res://art/fonts/metroid-fusion.ttf" id="2_ky7mc"]
+[ext_resource type="PackedScene" uid="uid://bvt5n71al3pvk" path="res://Menus/scenes/menus/options_menu/input/input_options_menu_with_mouse_sensitivity.tscn" id="2_v0hs3"]
+[ext_resource type="PackedScene" uid="uid://dvcee3a7nc2li" path="res://Menus/scenes/menus/options_menu/audio/audio_options_menu.tscn" id="3_4tkk3"]
+[ext_resource type="PackedScene" uid="uid://dcumjcgktijlg" path="res://Menus/scenes/menus/options_menu/video/video_options_menu_with_extras.tscn" id="4_ydejw"]
+[ext_resource type="PackedScene" uid="uid://44lfulcisodp" path="res://Menus/scenes/menus/options_menu/game/game_options_menu.tscn" id="5_nrekv"]
+
+[sub_resource type="Theme" id="Theme_iem7t"]
+default_font = ExtResource("2_ky7mc")
+default_font_size = 8
+
+[node name="MasterOptionsMenu" instance=ExtResource("1_mltu3")]
+theme = SubResource("Theme_iem7t")
+
+[node name="TabContainer" parent="." index="0"]
+layout_mode = 1
+anchors_preset = 15
+grow_horizontal = 2
+grow_vertical = 2
+current_tab = 0
+
+[node name="Controls" parent="TabContainer" index="1" instance=ExtResource("2_v0hs3")]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="Audio" parent="TabContainer" index="2" instance=ExtResource("3_4tkk3")]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="Video" parent="TabContainer" index="3" instance=ExtResource("4_ydejw")]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 2
+
+[node name="Game" parent="TabContainer" index="4" instance=ExtResource("5_nrekv")]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 3

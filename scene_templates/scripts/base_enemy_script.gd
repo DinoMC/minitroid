@@ -16,6 +16,7 @@ func die() -> void:
 	dying = true
 	$CollisionShape2D.set_deferred("disabled", true)
 	$EggSprite2D.texture = null
+	Game.get_singleton().play_alien_damaged_sound()
 	$EggSprite2D/eggsplosionAnimatedSprite2D.play("die")
 	await get_tree().create_timer(0.5).timeout
 	queue_free()

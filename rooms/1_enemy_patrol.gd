@@ -50,5 +50,6 @@ func die() -> void:
 	$CollisionShape2D.set_deferred("disabled", true)
 	$HurtZone_Area2D/CollisionShape2D.set_deferred("disabled", true)
 	$AnimatedSprite2D.play("die")
+	Game.get_singleton().play_alien_damaged_sound()
 	await get_tree().create_timer(0.5).timeout
 	queue_free()

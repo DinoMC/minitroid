@@ -1,0 +1,19 @@
+[gd_scene load_steps=5 format=3 uid="uid://cayv5ixdxkm8d"]
+
+[ext_resource type="PackedScene" uid="uid://cikf3o5omnunl" path="res://addons/maaacks_game_template/base/scenes/overlaid_menu/menus/mini_options_overlaid_menu.tscn" id="1_24wst"]
+[ext_resource type="FontFile" uid="uid://dklmhi5ksn2l" path="res://art/fonts/metroid-fusion.ttf" id="2_twwfc"]
+[ext_resource type="PackedScene" uid="uid://cbb0p03exlhrk" path="res://Menus/scenes/menus/options_menu/mini_options_menu.tscn" id="3_pmrxl"]
+
+[sub_resource type="Theme" id="Theme_7eby4"]
+default_font = ExtResource("2_twwfc")
+default_font_size = 8
+
+[node name="MiniOptionsOverlaidMenu" instance=ExtResource("1_24wst")]
+theme = SubResource("Theme_7eby4")
+menu_scene = ExtResource("3_pmrxl")
+
+[node name="TitleLabel" parent="MenuPanelContainer/MarginContainer/BoxContainer/TitleMargin" index="0"]
+theme_override_font_sizes/font_size = 16
+
+[node name="CloseButton" parent="MenuPanelContainer/MarginContainer/BoxContainer/MenuButtonsMargin/MenuButtons" index="0"]
+custom_minimum_size = Vector2(64, 20)

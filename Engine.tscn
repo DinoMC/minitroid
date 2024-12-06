@@ -1,0 +1,180 @@
+[gd_scene load_steps=7 format=3 uid="uid://ddg1kx5fdlbo4"]
+
+[ext_resource type="Script" path="res://addons/maaacks_game_template/extras/scripts/pause_menu_controller.gd" id="1_nsklh"]
+[ext_resource type="Script" path="res://scene_templates/scripts/engine.gd" id="1_q2k1x"]
+[ext_resource type="PackedScene" uid="uid://c3yoof7ceenfq" path="res://Menus/scenes/overlaid_menus/pause_menu.tscn" id="2_58wxh"]
+[ext_resource type="PackedScene" uid="uid://bltl5fo08e823" path="res://Game.tscn" id="3_ei7h8"]
+
+[sub_resource type="Shader" id="Shader_8t1qw"]
+code = "shader_type canvas_item;
+uniform sampler2D screen_texture : hint_screen_texture, repeat_disable, filter_nearest;
+
+uniform bool enable_grain = true;
+uniform bool enable_curving = false;
+uniform bool enable_scanlines = true;
+uniform bool enable_chromatic_aberration = true;
+uniform bool enable_rgb_grid = true;
+uniform bool enable_vhs_wiggle = true;
+uniform bool enable_vignette = false;
+uniform float brightness_multiplier:hint_range(0.7,2.0, 0.01) = 1.05;
+
+group_uniforms grain_settings;
+uniform float grain_strength: hint_range(0.0, 1.0, 0.05) = 0.25;
+
+group_uniforms curving_settings;
+uniform float curve_power: hint_range(1.0, 1.05, 0.005) =1.02;
+
+group_uniforms vignette_settings;
+uniform float vignette_size: hint_range(0.1, 10.0, 0.1) = 0.4;
+uniform float vignette_smoothness: hint_range(0.05, 5.0, 0.05) = 0.4;
+
+group_uniforms scanlines_settings;
+uniform float scanlines_interval: hint_range(0.0, 20.0, 1.0) = 6.0;
+uniform float scanline_opacity: hint_range(0, 1, 0.05) = 0.45;
+uniform float scanline_thickness: hint_range(0, 10, 1.0) = 3;
+
+group_uniforms chromatic_aberration_settings;
+uniform float chromatic_aberration_strength: hint_range(0.0, 10.0, 1.0) = 1.0;
+
+
+group_uniforms vhs_wiggle_settings;
+uniform sampler2D noise_texture: filter_linear_mipmap, repeat_enable;
+uniform float wiggle:hint_range(0.0, 0.05, 0.001) = 0.002;
+
+vec2 distort(vec2 p)
+{
+	float angle = p.y / p.x;
+	float theta = atan(p.y,p.x);
+	float radius = pow(length(p), curve_power);
+
+	p.x = radius * cos(theta);
+	p.y = radius * sin(theta);
+
+	return 0.5 * (p + vec2(1.0,1.0));
+}
+
+float filmGrainNoise(in float time, in vec2 uv)
+{
+    return fract(sin(dot(uv, vec2(12.9898, 78.233) * time)) * 43758.5453);
+}
+
+float v2random(vec2 uv) {
+	return texture(noise_texture, mod(uv, vec2(1.0))).x;
+}
+
+void fragment()
+{
+	vec2 xy = SCREEN_UV;
+
+	if(enable_vhs_wiggle)
+	{
+		xy.x += (v2random(vec2(xy.y / 10.0, TIME / 10.0) / 1.0) - 0.5) * wiggle *0.1;
+		xy.x += (v2random(vec2(xy.y, TIME * 10.0)) - 0.5) * wiggle * 0.1;
+	}
+
+	if(enable_curving)
+	{
+		xy *= 2.0;
+		xy.x -= 1.0;
+		xy.y -= 1.0;
+		xy = distort(xy);
+	}
+
+	vec4 color = texture(screen_texture, xy);
+
+	if(enable_chromatic_aberration)
+	{
+		float r = texture(screen_texture, xy + vec2(SCREEN_PIXEL_SIZE*vec2(chromatic_aberration_strength, 0.0)), 0.0).r;
+		float g = texture(screen_texture, xy + vec2(SCREEN_PIXEL_SIZE* 0.0), 0.0).g;
+		float b = texture(screen_texture, xy + vec2(SCREEN_PIXEL_SIZE*vec2(-chromatic_aberration_strength, 0.0)), 0.0).b;
+		color.rgb = vec3(r, g, b);
+	}
+
+	if(enable_grain)
+		color.rgb = mix(color.rgb ,vec3(0.0), filmGrainNoise(TIME, SCREEN_UV) * grain_strength);
+
+	if(enable_rgb_grid)
+	{
+		float r;
+		float g;
+		float b;
+		int rgbIndex = int(FRAGCOORD.x) % 3;
+		if(rgbIndex == 0)
+			r = 1.;
+		else
+			r = 0.;
+		if(rgbIndex == 1)
+			g = 1.;
+		else
+			g = 0.;
+		if(rgbIndex == 2)
+			b = 1.;
+		else
+			b = 0.;
+		vec3 mask = vec3(r,g,b);
+		color.rgb *= mask;
+	}
+	color.rgb *= brightness_multiplier;
+
+	if(enable_scanlines)
+	{
+		float scanline = mod(float(FRAGCOORD.y), scanlines_interval); // check which pixel we are in a row of X
+		scanline = 1.0 - (step(scanline_thickness, scanline)); // black if above 1.0 (0.0, 1.0, 2.0)
+		scanline *= scanline_opacity;
+		color.rgb *= 1.- scanline;
+	}
+
+	if(enable_vignette)
+	{
+		vec2 uv = SCREEN_UV;
+		uv *=  1.0 - uv.yx;
+		float vig = uv.x*uv.y / vignette_size * 1000.0;
+		vig = pow(vig, 1.0/vignette_smoothness);
+		color.rgb -= 1.0-(clamp(vig,0,1));
+	}
+
+	COLOR = color;
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_maj0v"]
+shader = SubResource("Shader_8t1qw")
+shader_parameter/enable_grain = true
+shader_parameter/enable_curving = true
+shader_parameter/enable_scanlines = true
+shader_parameter/enable_chromatic_aberration = true
+shader_parameter/enable_rgb_grid = false
+shader_parameter/enable_vhs_wiggle = false
+shader_parameter/enable_vignette = false
+shader_parameter/brightness_multiplier = 1.05
+shader_parameter/grain_strength = 0.25
+shader_parameter/curve_power = 1.045
+shader_parameter/vignette_size = 0.4
+shader_parameter/vignette_smoothness = 0.4
+shader_parameter/scanlines_interval = 6.0
+shader_parameter/scanline_opacity = 0.45
+shader_parameter/scanline_thickness = 3.0
+shader_parameter/chromatic_aberration_strength = 2.0
+shader_parameter/wiggle = 0.002
+
+[node name="Engine" type="Node"]
+process_mode = 3
+script = ExtResource("1_q2k1x")
+
+[node name="Game" parent="." instance=ExtResource("3_ei7h8")]
+
+[node name="PauseMenuController" type="Node" parent="."]
+process_mode = 1
+script = ExtResource("1_nsklh")
+pause_menu_packed = ExtResource("2_58wxh")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+process_mode = 1
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
+process_mode = 3
+visible = false
+z_index = 100
+material = SubResource("ShaderMaterial_maj0v")
+offset_right = 480.0
+offset_bottom = 270.0
+color = Color(0.431373, 0, 0, 1)

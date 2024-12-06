@@ -23,5 +23,6 @@ func Update(delta: float):
 
 
 func HandleAnimations():
-	Player.Animator.play("Fall")
+	if !Player.on_ladder || !Player.keyUp:
+		Player.Animator.play("Fall")
 	Player.HandleFlipH()

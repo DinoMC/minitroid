@@ -18,7 +18,7 @@ func EnterState():
 	Player.SetSquish(abs(Player.dashDirection.y * DashSquish), abs(Player.dashDirection.x * DashSquish))
 	var _distortion = DistortionEffect.instantiate()
 	_distortion.global_position = Player.global_position
-	get_tree().root.get_node("Game").add_child(_distortion)
+	get_tree().root.get_node("Engine").get_node("Game").add_child(_distortion)
 	Player.Animator.play("Dash")
 	Player.HandleFlipH()
 

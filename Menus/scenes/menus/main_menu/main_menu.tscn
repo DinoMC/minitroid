@@ -1,0 +1,12 @@
+[gd_scene load_steps=5 format=3 uid="uid://bkidq4ayf5b4n"]
+
+[ext_resource type="PackedScene" uid="uid://c6k5nnpbypshi" path="res://addons/maaacks_game_template/base/scenes/menus/main_menu/main_menu.tscn" id="1_jfiby"]
+[ext_resource type="Script" path="res://Menus/scenes/menus/main_menu/main_menu.gd" id="2_1jno3"]
+[ext_resource type="PackedScene" uid="uid://bytu577k32qla" path="res://Menus/scenes/menus/options_menu/master_options_menu_with_tabs.tscn" id="3_4qlb3"]
+[ext_resource type="PackedScene" uid="uid://dpcktcq2wited" path="res://Menus/scenes/credits/credits.tscn" id="4_5j8kl"]
+
+[node name="MainMenu" instance=ExtResource("1_jfiby")]
+script = ExtResource("2_1jno3")
+game_scene_path = "res://Menus/scenes/game_scene/game_ui.tscn"
+options_packed_scene = ExtResource("3_4qlb3")
+credits_packed_scene = ExtResource("4_5j8kl")

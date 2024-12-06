@@ -1,8 +1,9 @@
-[gd_scene load_steps=9 format=4 uid="uid://c7374do3l36b0"]
+[gd_scene load_steps=10 format=4 uid="uid://c7374do3l36b0"]
 
 [ext_resource type="PackedScene" uid="uid://bsg0351mx3b4u" path="res://addons/MetroidvaniaSystem/Nodes/RoomInstance.tscn" id="1_brb8f"]
 [ext_resource type="TileSet" uid="uid://cvsgbkkxhvbda" path="res://art/textures/main_tileset.tres" id="2_ybf2f"]
 [ext_resource type="Script" path="res://scene_templates/scripts/item_pickup_area_2d.gd" id="3_v7cwj"]
+[ext_resource type="AudioStream" uid="uid://bupku5idhqh5d" path="res://art/sounds/PowerUp02.wav" id="4_3covd"]
 [ext_resource type="Texture2D" uid="uid://bd6a54d8cx0o2" path="res://art/sprites/items/Sticky Note.png" id="4_pjkge"]
 [ext_resource type="Texture2D" uid="uid://euq8wyl5ylho" path="res://art/textures/Door_Open_Animation.png" id="5_x2byg"]
 
@@ -43,6 +44,12 @@ centered = false
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ItemPickup_Area2D"]
 position = Vector2(8, 8)
 shape = SubResource("RectangleShape2D_y8cqe")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="ItemPickup_Area2D"]
+process_mode = 3
+stream = ExtResource("4_3covd")
+volume_db = -2.0
+bus = &"SFX"
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 z_index = 2

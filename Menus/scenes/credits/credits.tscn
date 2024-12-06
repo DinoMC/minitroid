@@ -1,0 +1,58 @@
+[gd_scene load_steps=3 format=3 uid="uid://dpcktcq2wited"]
+
+[ext_resource type="PackedScene" uid="uid://t2dui8ppm3a4" path="res://addons/maaacks_game_template/base/scenes/credits/credits.tscn" id="1_pyqys"]
+[ext_resource type="Script" path="res://Menus/scenes/credits/credits.gd" id="2_8taa7"]
+
+[node name="Credits" instance=ExtResource("1_pyqys")]
+script = ExtResource("2_8taa7")
+attribution_file_path = "res://Menus/ATTRIBUTION.md"
+h1_font_size = 42
+h2_font_size = 32
+h3_font_size = 24
+h4_font_size = 16
+current_speed = 0.4
+enabled = false
+
+[node name="ScrollContainer" parent="." index="0"]
+vertical_scroll_mode = 2
+
+[node name="HeaderSpace" parent="ScrollContainer/VBoxContainer" index="0"]
+visible = false
+custom_minimum_size = Vector2(0, 270)
+
+[node name="CreditsLabel" parent="ScrollContainer/VBoxContainer" index="1"]
+text = "[center]
+[font_size=24]Director[/font_size]
+[font_size=16][url=https://dinomc.itch.io/]DinoMC[/url]  [/font_size]
+
+
+[font_size=24]Assets[/font_size]
+  
+[font_size=16]Metroid Fusion inspired font[/font_size]
+Author: [url=https://fontstruct.com/fontstructions/show/2393436]FontStruction[/url]  
+License: [url=http://creativecommons.org/licenses/by/3.0/]CC-BY 3.0[/url]
+
+[font_size=16]Menu Song : \"Theme of the Masked Man\"[/font_size]
+Author: [url=https://opengameart.org/users/request]request[/url]  
+License: [url=http://creativecommons.org/licenses/by/4.0/]CC-BY 4.0[/url]
+
+[font_size=32]Tools[/font_size]
+
+[font_size=16]Godot[/font_size]
+Author: [url=https://godotengine.org/contact]Juan Linietsky, Ariel Manzur, and contributors[/url]  
+Source: [url=https://godotengine.org/]godotengine.org[/url]  
+License: [url=https://github.com/godotengine/godot/blob/master/LICENSE.txt]MIT License[/url] 
+
+[font_size=16]Godot Game Template[/font_size]
+Author: [url=https://github.com/Maaack/Godot-Game-Template/graphs/contributors]Marek Belski and contributors[/url]  
+Source: [url=https://github.com/Maaack/Godot-Game-Template]github: Godot-Game-Template[/url]  
+License: [url=LICENSE.txt]MIT License[/url]  
+
+[font_size=16]Metroidvania Systems for Godot[/font_size]
+Author: [url=https://github.com/KoBeWi/Metroidvania-System/graphs/contributors]KoBeWi and contributors[/url]  
+Source: [url=https://github.com/KoBeWi/Metroidvania-System]github: Metroidvania-System[/url]  
+License: [url=LICENSE.txt]MIT License[/url]  
+[/center]"
+
+[node name="FooterSpace" parent="ScrollContainer/VBoxContainer" index="2"]
+visible = false

@@ -127,6 +127,8 @@ var MetSysposition : Vector3i
 
 var blaster := false
 
+var on_ladder := false
+
 func _ready():
 	# Initialize the state machine
 	for state in States.get_children():
@@ -192,6 +194,8 @@ func _physics_process(delta: float) -> void:
 		# Handle aiming direction
 		HandleAim()
 		
+		HandleLadder()
+		
 		# Handle State Changes
 		HandleStateChange()
 		
@@ -219,19 +223,39 @@ func _physics_process(delta: float) -> void:
 func trigger_rewind() -> void:
 	frame_count = 0
 	rewinding = true
+	$DeathSoundPlayer2D_reversed.play()
 	var tween = get_tree().create_tween()
 	tween.set_ease(Tween.EASE_IN_OUT)
 	tween.set_trans(Tween.TRANS_CUBIC)
 	tween.tween_interval(0.5)
 	tween.tween_property(Game.get_singleton().fdb_rect, "self_modulate:a", 1.0, 5.0)
 	tween.tween_callback(trigger_restart)
+	await get_tree().create_timer(1.0).timeout
+	Game.get_singleton().rewind_timer.start(1.99)
+	await get_tree().create_timer(0.5).timeout
+	Game.get_singleton().rewind_timer.start(1.99)
+	await get_tree().create_timer(0.5).timeout
+	Game.get_singleton().rewind_timer.start(2.99)
+	await get_tree().create_timer(0.5).timeout
+	Game.get_singleton().rewind_timer.start(2.99)
+	await get_tree().create_timer(0.5).timeout
+	Game.get_singleton().rewind_timer.start(3.99)
+	await get_tree().create_timer(0.5).timeout
+	Game.get_singleton().rewind_timer.start(3.99)
+	await get_tree().create_timer(0.5).timeout
+	Game.get_singleton().rewind_timer.start(4.99)
+	await get_tree().create_timer(0.5).timeout
+	Game.get_singleton().rewind_timer.start(4.99)
 
 func trigger_death() -> void:
 	dying = true
 	ChangeState(States.LockedDeath)
+	$DeathSoundPlayer2D.play()
 	velocity = Vector2.ZERO
 	$Collider.set_deferred("disabled", true)
+	Game.get_singleton().stop_music_animated()
 	await get_tree().create_timer(1.25).timeout
+	Game.get_singleton().start_music_reversed()
 	trigger_rewind()
 	
 func trigger_restart() -> void:
@@ -242,6 +266,8 @@ func trigger_restart() -> void:
 
 func HorizontalMovement(acceleration: float = Acceleration, deceleration: float = Deceleration):
 	moveDirectionX = Input.get_axis("Left", "Right")
+	if moveDirectionX < -0.1 : moveDirectionX = -1
+	if moveDirectionX > 0.1 : moveDirectionX = 1
 	if dying: moveDirectionX = 0
 	var targetSpeed = moveDirectionX * moveSpeed
 	if keyLock: targetSpeed = 0
@@ -269,10 +295,11 @@ func HandleJumpBuffer():
 	if (keyJumpPressed):
 		JumpBufferTimer.start(JumpBufferTime)
 
+var null_gravity = 1.0
 
 func HandleGravity(delta, gravity: float = GravityJump):
 	if !dying:
-		velocity.y += gravity * delta
+		velocity.y += gravity * delta * null_gravity
 
 
 func HandleJump():
@@ -360,6 +387,7 @@ func HandleDash():
 				DashTimer.start(DashBufferTime)
 				await DashTimer.timeout
 				dashes += 1
+				$DashStreamPlayer2D.play()
 				ChangeState(States.Dash)
 
 
@@ -378,11 +406,11 @@ func GetInputStates():
 		keyDown = Input.is_action_pressed("Down")
 		keyLeft = Input.is_action_pressed("Left")
 		keyRight = Input.is_action_pressed("Right")
-		keyLock = Input.is_action_pressed("Lock In Place")
+		keyLock = Input.is_action_pressed("Lock Character In Place")
 		keyJump = Input.is_action_pressed("Jump") # && (!Input.is_action_pressed("Down") || !is_on_floor())
 		keyJumpPressed = Input.is_action_just_pressed("Jump") # && (!Input.is_action_pressed("Down") || !is_on_floor())
 		keyDropDown = Input.is_action_just_pressed("Jump") && (Input.is_action_pressed("Down") && is_on_floor())
-		keyClimb = Input.is_action_pressed("Climb")
+		#keyClimb = Input.is_action_pressed("Climb")
 		keyDash = Input.is_action_just_pressed("Dash")
 		
 		if (keyLeft): facing = -1
@@ -464,6 +492,7 @@ func try_damage_player() -> void:
 		damage_player()
 
 func damage_player() -> void:
+	$DamagedSoundPlayer2D.play()
 	ChangeState(States.Locked)
 
 var direction = ""
@@ -506,8 +535,17 @@ func ShootBlaster() -> void:
 		spawn_point = spawn_points[key]
 	projectile.position = spawn_point.global_position
 	Game.get_singleton().add_child(projectile)
+	$BlasterSoundPlayer2D.play()
 
 func _on_room_changed(_target_room: String) -> void:
 	invulnerable = true
 	var tween = get_tree().create_tween()
 	tween.tween_property(self, "invulnerable", false, 0.15)
+
+func HandleLadder() -> void:
+	if on_ladder && keyUp:
+		null_gravity = 0.0
+		velocity.y = -100.0
+		Animator.play("WallClimb")
+	else:
+		null_gravity = 1.0

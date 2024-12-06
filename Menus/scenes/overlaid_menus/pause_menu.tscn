@@ -1,0 +1,85 @@
+[gd_scene load_steps=8 format=3 uid="uid://c3yoof7ceenfq"]
+
+[ext_resource type="PackedScene" uid="uid://b5cd6sa8qq4vc" path="res://addons/maaacks_game_template/base/scenes/overlaid_menu/menus/pause_menu.tscn" id="1_r3nuy"]
+[ext_resource type="Script" path="res://Menus/scenes/overlaid_menus/pause_menu.gd" id="2_6g8yj"]
+[ext_resource type="FontFile" uid="uid://dklmhi5ksn2l" path="res://art/fonts/metroid-fusion.ttf" id="2_vgmh5"]
+[ext_resource type="PackedScene" uid="uid://cayv5ixdxkm8d" path="res://Menus/scenes/overlaid_menus/mini_options_overlaid_menu.tscn" id="3_iwexl"]
+
+[sub_resource type="Theme" id="Theme_6wmbk"]
+default_font = ExtResource("2_vgmh5")
+default_font_size = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3c0wk"]
+bg_color = Color(0, 0, 0, 0.784314)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u2rs8"]
+bg_color = Color(0.259294, 0.259294, 0.259294, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="PauseMenu" instance=ExtResource("1_r3nuy")]
+z_index = 10
+theme = SubResource("Theme_6wmbk")
+script = ExtResource("2_6g8yj")
+options_packed_scene = ExtResource("3_iwexl")
+main_menu_scene = "res://Menus/scenes/menus/main_menu/main_menu_with_animations.tscn"
+pauses_game = true
+
+[node name="BackgroundColor" parent="." index="0"]
+visible = false
+
+[node name="MenuPanelContainer" parent="." index="1"]
+custom_minimum_size = Vector2(360, 220)
+offset_left = -67.0
+offset_top = -96.5
+offset_right = 67.0
+offset_bottom = 96.5
+theme_override_styles/panel = SubResource("StyleBoxFlat_3c0wk")
+
+[node name="PanelColor" parent="MenuPanelContainer" index="0"]
+visible = false
+
+[node name="MarginContainer" parent="MenuPanelContainer" index="1"]
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 8
+
+[node name="TitleMargin" parent="MenuPanelContainer/MarginContainer/BoxContainer" index="0"]
+theme_override_constants/margin_bottom = 12
+
+[node name="TitleLabel" parent="MenuPanelContainer/MarginContainer/BoxContainer/TitleMargin" index="0"]
+theme_override_font_sizes/font_size = 16
+
+[node name="MenuButtonsMargin" parent="MenuPanelContainer/MarginContainer/BoxContainer" index="2"]
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_bottom = 6
+
+[node name="MenuButtons" parent="MenuPanelContainer/MarginContainer/BoxContainer/MenuButtonsMargin" index="0"]
+theme_override_constants/separation = 8
+
+[node name="CloseButton" parent="MenuPanelContainer/MarginContainer/BoxContainer/MenuButtonsMargin/MenuButtons" index="0"]
+custom_minimum_size = Vector2(64, 20)
+theme_override_styles/normal = SubResource("StyleBoxFlat_u2rs8")
+
+[node name="RestartButton" parent="MenuPanelContainer/MarginContainer/BoxContainer/MenuButtonsMargin/MenuButtons" index="1"]
+custom_minimum_size = Vector2(64, 20)
+theme_override_styles/normal = SubResource("StyleBoxFlat_u2rs8")
+
+[node name="OptionsButton" parent="MenuPanelContainer/MarginContainer/BoxContainer/MenuButtonsMargin/MenuButtons" index="2"]
+custom_minimum_size = Vector2(64, 20)
+theme_override_styles/normal = SubResource("StyleBoxFlat_u2rs8")
+
+[node name="MainMenuButton" parent="MenuPanelContainer/MarginContainer/BoxContainer/MenuButtonsMargin/MenuButtons" index="3"]
+custom_minimum_size = Vector2(64, 20)
+theme_override_styles/normal = SubResource("StyleBoxFlat_u2rs8")
+
+[node name="ExitButton" parent="MenuPanelContainer/MarginContainer/BoxContainer/MenuButtonsMargin/MenuButtons" index="4"]
+custom_minimum_size = Vector2(64, 20)
+theme_override_styles/normal = SubResource("StyleBoxFlat_u2rs8")

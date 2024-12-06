@@ -1,0 +1,113 @@
+[gd_scene load_steps=14 format=3 uid="uid://dgf6wcencjhud"]
+
+[ext_resource type="Script" path="res://scene_templates/scripts/boss_projectile_rigid_body_2d.gd" id="1_v3wrw"]
+[ext_resource type="Texture2D" uid="uid://bsym606ugc5fa" path="res://art/sprites/enemies/Reactor_Man_Projectile.png" id="1_wrpm8"]
+[ext_resource type="Script" path="res://scene_templates/scripts/damage_area_2d.gd" id="2_mb7h0"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_xxmyt"]
+bounce = 0.8
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yfkhw"]
+atlas = ExtResource("1_wrpm8")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_13sx4"]
+atlas = ExtResource("1_wrpm8")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a7p46"]
+atlas = ExtResource("1_wrpm8")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f00iy"]
+atlas = ExtResource("1_wrpm8")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_etxgc"]
+atlas = ExtResource("1_wrpm8")
+region = Rect2(64, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dseev"]
+atlas = ExtResource("1_wrpm8")
+region = Rect2(80, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m733n"]
+atlas = ExtResource("1_wrpm8")
+region = Rect2(96, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ww3i8"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yfkhw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_13sx4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a7p46")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f00iy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_etxgc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dseev")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m733n")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_etxgc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dseev")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m733n")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_etxgc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dseev")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m733n")
+}],
+"loop": false,
+"name": &"default",
+"speed": 8.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_42bj5"]
+radius = 7.0
+
+[node name="BossProjectileRigidBody2D" type="RigidBody2D"]
+process_mode = 1
+position = Vector2(296, 172)
+collision_layer = 18
+collision_mask = 17
+physics_material_override = SubResource("PhysicsMaterial_xxmyt")
+angular_velocity = 6.63225
+script = ExtResource("1_v3wrw")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_ww3i8")
+autoplay = "default"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-0.5, 0.5)
+shape = SubResource("CircleShape2D_42bj5")
+
+[node name="DamageArea2D" type="Area2D" parent="."]
+script = ExtResource("2_mb7h0")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DamageArea2D"]
+position = Vector2(-0.5, 0.5)
+shape = SubResource("CircleShape2D_42bj5")
+
+[connection signal="body_entered" from="DamageArea2D" to="DamageArea2D" method="_on_body_entered"]
+[connection signal="body_exited" from="DamageArea2D" to="DamageArea2D" method="_on_body_exited"]

@@ -1,10 +1,11 @@
-[gd_scene load_steps=22 format=3 uid="uid://dpcle4l4srkwp"]
+[gd_scene load_steps=23 format=3 uid="uid://dpcle4l4srkwp"]
 
 [ext_resource type="PackedScene" uid="uid://bkidq4ayf5b4n" path="res://Menus/scenes/menus/main_menu/main_menu.tscn" id="1_ic4ki"]
 [ext_resource type="FontFile" uid="uid://dklmhi5ksn2l" path="res://art/fonts/metroid-fusion.ttf" id="2_kkmyt"]
 [ext_resource type="Script" path="res://Menus/scenes/menus/main_menu/main_menu_with_animations.gd" id="2_v47ri"]
 [ext_resource type="Texture2D" uid="uid://baa245v0rn032" path="res://art/textures/bg2.png" id="4_324fw"]
 [ext_resource type="AudioStream" uid="uid://dpspn2xm65to3" path="res://art/music/theme-of-the-masked-man_full.ogg" id="4_t4f3c"]
+[ext_resource type="Texture2D" uid="uid://b5avkncsyvcdv" path="res://art/ui/enlarge.png" id="6_cpft4"]
 
 [sub_resource type="Theme" id="Theme_tayij"]
 default_font = ExtResource("2_kkmyt")
@@ -476,4 +477,17 @@ offset_bottom = 1.0
 
 [node name="HTTPRequest3" type="HTTPRequest" parent="." index="12"]
 
+[node name="FullscreenButton" type="TextureButton" parent="." index="13"]
+texture_filter = 1
+layout_mode = 0
+offset_left = 398.0
+offset_top = 192.0
+offset_right = 458.0
+offset_bottom = 252.0
+texture_normal = ExtResource("6_cpft4")
+texture_pressed = ExtResource("6_cpft4")
+ignore_texture_size = true
+stretch_mode = 0
+
 [connection signal="pressed" from="MenuContainer/MenuButtonsMargin/MenuButtonsContainer/MenuButtonsBoxContainer/ConnectButton" to="." method="_on_connect_button_pressed"]
+[connection signal="pressed" from="FullscreenButton" to="." method="_on_fullscreen_button_pressed"]

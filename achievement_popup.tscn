@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://df4okxjb452xk"]
 
-[ext_resource type="StyleBox" path="res://achievement_box.tres" id="1_snoyq"]
+[ext_resource type="StyleBox" uid="uid://dhir6j8dua4xf" path="res://achievement_box.tres" id="1_snoyq"]
 [ext_resource type="Script" path="res://achievement_popup.gd" id="2_lx0qo"]
 [ext_resource type="Texture2D" uid="uid://ddpbi6qphk7je" path="res://art/icons/Dash.png" id="3_texrs"]
 [ext_resource type="Texture2D" uid="uid://du8nj26kodc8q" path="res://art/borderTemplate.png" id="4_k5p0i"]

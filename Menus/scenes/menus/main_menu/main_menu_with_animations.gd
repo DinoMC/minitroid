@@ -134,3 +134,7 @@ func enable_buttons() -> void:
 Account"
 	%ConnectButton.disabled = false
 	%PlayButton.disabled = false
+
+
+func _on_fullscreen_button_pressed() -> void:
+	AppSettings.set_fullscreen_enabled(!AppSettings.is_fullscreen(get_window()), get_window())

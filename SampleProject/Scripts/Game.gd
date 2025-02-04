@@ -126,6 +126,7 @@ func _ready() -> void:
 		
 		rewind_timer.start(5999)
 		rewind_timer.paused = true
+		$UI/ControlsControl/F2TouchScreenButton.show()
 		await get_tree().create_timer(0.01).timeout
 		if !player.abilities.has("won"):
 			item_popup("won")
@@ -219,9 +220,9 @@ func item_popup(itemname: String) -> void:
 		tween.tween_property($UI/PopupPanel, "scale:y", 1.0, 0.5)
 		tween.tween_property($UI/PopupPanel/RichTextLabel, "text", "[center]"+item_descriptions[itemname]+"[/center]", 0.01)
 		if itemname == "won":
-			tween.tween_interval(1.0)
-		else:
 			tween.tween_interval(3.0)
+		else:
+			tween.tween_interval(1.0)
 		tween.tween_property(self, "unpausable", true, 0.01)
 		
 		complete_challenge(itemname)

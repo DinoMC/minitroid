@@ -266,8 +266,8 @@ func trigger_restart() -> void:
 
 func HorizontalMovement(acceleration: float = Acceleration, deceleration: float = Deceleration):
 	moveDirectionX = Input.get_axis("Left", "Right")
-	if moveDirectionX < -0.1 : moveDirectionX = -1
-	if moveDirectionX > 0.1 : moveDirectionX = 1
+	if moveDirectionX < -0.05 : moveDirectionX = -1
+	if moveDirectionX > 0.05 : moveDirectionX = 1
 	if dying: moveDirectionX = 0
 	var targetSpeed = moveDirectionX * moveSpeed
 	if keyLock: targetSpeed = 0
@@ -409,7 +409,7 @@ func GetInputStates():
 		keyLock = Input.is_action_pressed("Lock Character In Place")
 		keyJump = Input.is_action_pressed("Jump") # && (!Input.is_action_pressed("Down") || !is_on_floor())
 		keyJumpPressed = Input.is_action_just_pressed("Jump") # && (!Input.is_action_pressed("Down") || !is_on_floor())
-		keyDropDown = Input.is_action_just_pressed("Jump") && (Input.is_action_pressed("Down") && is_on_floor())
+		keyDropDown = Input.is_action_just_pressed("Jump") && (Input.is_action_pressed("Down") && Input.get_action_strength("Down") > 0.8 && is_on_floor())
 		#keyClimb = Input.is_action_pressed("Climb")
 		keyDash = Input.is_action_just_pressed("Dash")
 		

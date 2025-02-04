@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://bltl5fo08e823"]
+[gd_scene load_steps=34 format=3 uid="uid://bltl5fo08e823"]
 
 [ext_resource type="Script" path="res://SampleProject/Scripts/Game.gd" id="1_axhx4"]
 [ext_resource type="PackedScene" uid="uid://ckng63detpg81" path="res://MovementSystemImport/Player.tscn" id="2_x143p"]
@@ -7,13 +7,33 @@
 [ext_resource type="Script" path="res://script_templates/rewind_timer.gd" id="5_glw37"]
 [ext_resource type="FontFile" uid="uid://dklmhi5ksn2l" path="res://art/fonts/metroid-fusion.ttf" id="6_0etqd"]
 [ext_resource type="AudioStream" uid="uid://de4xuh63d2d7m" path="res://art/music/8-bit_slay_the_evil.ogg" id="7_2dbhx"]
+[ext_resource type="PackedScene" uid="uid://dmr0fcamx7t56" path="res://addons/virtual_joystick/virtual_joystick_scene.tscn" id="7_runtc"]
+[ext_resource type="Texture2D" uid="uid://cfrqvtpw3aflp" path="res://art/ui/T_S_A_Light.png" id="7_xb0nl"]
 [ext_resource type="AudioStream" uid="uid://bqevd6uhdaqyu" path="res://art/music/8-bit_slay_the_evil_reversed.ogg" id="8_noqxk"]
+[ext_resource type="Texture2D" uid="uid://ckvqkcvfkdm7t" path="res://art/ui/T_S_A.png" id="8_qledx"]
 [ext_resource type="AudioStream" uid="uid://tpxo5uatgw25" path="res://art/sounds/blood_flesh_gore_A_16.ogg" id="9_6k63s"]
 [ext_resource type="AudioStream" uid="uid://ffyk80uhbb4w" path="res://art/music/11._jester_battle.mp3" id="9_nqur4"]
+[ext_resource type="Texture2D" uid="uid://cxy1kfeqj72he" path="res://art/ui/T_S_B_Light.png" id="9_ydfbe"]
+[ext_resource type="Texture2D" uid="uid://c81i0hx2565rw" path="res://art/ui/T_S_B.png" id="10_dqsm6"]
 [ext_resource type="AudioStream" uid="uid://cs482gdcbjtxd" path="res://art/sounds/blood_flesh_gore_A_17.ogg" id="10_f0mp8"]
 [ext_resource type="AudioStream" uid="uid://b1ycxswp242s6" path="res://art/music/11._jester_battle_reversed.ogg" id="10_odu1x"]
+[ext_resource type="Texture2D" uid="uid://3l0dykbjit6" path="res://art/ui/T_S_Y_Light.png" id="11_4bvq3"]
 [ext_resource type="AudioStream" uid="uid://bupku5idhqh5d" path="res://art/sounds/PowerUp02.wav" id="11_nxw8h"]
 [ext_resource type="AudioStream" uid="uid://y68a34k1uwwm" path="res://art/sounds/SciFi04.wav" id="12_1oi5c"]
+[ext_resource type="Texture2D" uid="uid://c4sd80t3fcfmu" path="res://art/ui/T_S_Y.png" id="12_kep84"]
+[ext_resource type="Texture2D" uid="uid://cgjtchjhp0jrj" path="res://art/ui/T_S_X_Light.png" id="13_37x6q"]
+[ext_resource type="Texture2D" uid="uid://i7qyxtpdr001" path="res://art/ui/T_S_X.png" id="14_5m0tk"]
+[ext_resource type="Texture2D" uid="uid://bsij2mtg38x5d" path="res://art/ui/T_F2_Key_White.png" id="15_swipb"]
+[ext_resource type="Texture2D" uid="uid://csacf52aymbnl" path="res://art/ui/T_F2_Key_Dark.png" id="16_uoe50"]
+
+[sub_resource type="Gradient" id="Gradient_fdv44"]
+offsets = PackedFloat32Array(0)
+colors = PackedColorArray(0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_2i6tb"]
+gradient = SubResource("Gradient_fdv44")
+width = 144
+height = 100
 
 [sub_resource type="GDScript" id="GDScript_u7odr"]
 resource_name = "MapWindow"
@@ -68,14 +88,16 @@ func _draw() -> void:
 
 func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed(\"Open Map\") || (Input.is_action_just_pressed(\"ui_cancel\") && visible):
-		if !visible && get_tree().paused: return
-		visible = not visible
-		if visible:
-			update_offset()
-			get_tree().paused = true
-		else:
-			get_tree().paused = false
-		
+		toggle_map()
+
+func toggle_map() -> void:
+	if !visible && get_tree().paused: return
+	visible = not visible
+	if visible:
+		update_offset()
+		get_tree().paused = true
+	else:
+		get_tree().paused = false		
 
 #func _input(event: InputEvent) -> void:
 	#if event is InputEventKey:
@@ -102,6 +124,11 @@ func reset_starting_coords():
 	var coords := MetSys.get_current_flat_coords()
 	starting_coords = Vector2i(coords.x, coords.y)
 	queue_redraw()
+
+
+func _on_minimap_gui_input(event: InputEvent) -> void:
+	if (event is InputEventMouseButton and event.is_pressed() and event.button_index == 1):
+		toggle_map()
 "
 
 [sub_resource type="GDScript" id="GDScript_66suq"]
@@ -124,6 +151,15 @@ func update():
 		# Show the percentage.
 		text = \"%03d%%\" % int(MetSys.get_explored_ratio() * 100)
 "
+
+[sub_resource type="Gradient" id="Gradient_olgsp"]
+offsets = PackedFloat32Array(0)
+colors = PackedColorArray(1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_ndjpb"]
+gradient = SubResource("Gradient_olgsp")
+width = 480
+height = 270
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fm8eh"]
 bg_color = Color(0.266667, 0.0509804, 0.482353, 1)
@@ -165,6 +201,7 @@ display_player_location = true
 area = Vector2i(7, 5)
 
 [node name="Background" type="Panel" parent="UI/Minimap"]
+visible = false
 show_behind_parent = true
 layout_mode = 1
 anchors_preset = 15
@@ -172,6 +209,12 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="TouchScreenButton" type="TouchScreenButton" parent="UI/Minimap"]
+texture_normal = SubResource("GradientTexture2D_2i6tb")
+texture_pressed = SubResource("GradientTexture2D_2i6tb")
+action = "Open Map"
+visibility_mode = 1
 
 [node name="MapWindow" type="Panel" parent="UI"]
 process_mode = 3
@@ -186,8 +229,10 @@ script = SubResource("GDScript_u7odr")
 
 [node name="Percent" type="Label" parent="UI/MapWindow"]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 60.0
+offset_bottom = 43.0
 text = "0%"
 script = SubResource("GDScript_66suq")
 
@@ -201,6 +246,12 @@ offset_top = -23.0
 offset_right = 40.0
 grow_vertical = 0
 text = "Press D to toggle delta vector"
+
+[node name="TouchScreenButton" type="TouchScreenButton" parent="UI/MapWindow"]
+texture_normal = SubResource("GradientTexture2D_ndjpb")
+texture_pressed = SubResource("GradientTexture2D_ndjpb")
+action = "Open Map"
+visibility_mode = 1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="UI"]
 visible = false
@@ -297,6 +348,87 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 1)
 
+[node name="ControlsControl" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="JumpTouchScreenButton" type="TouchScreenButton" parent="UI/ControlsControl"]
+position = Vector2(315, 216)
+scale = Vector2(0.3, 0.3)
+texture_normal = ExtResource("7_xb0nl")
+texture_pressed = ExtResource("8_qledx")
+action = "Jump"
+visibility_mode = 1
+
+[node name="ShootTouchScreenButton" type="TouchScreenButton" parent="UI/ControlsControl"]
+position = Vector2(368, 216)
+scale = Vector2(0.3, 0.3)
+texture_normal = ExtResource("9_ydfbe")
+texture_pressed = ExtResource("10_dqsm6")
+action = "Shoot"
+visibility_mode = 1
+
+[node name="DashTouchScreenButton" type="TouchScreenButton" parent="UI/ControlsControl"]
+position = Vector2(421, 216)
+scale = Vector2(0.3, 0.3)
+texture_normal = ExtResource("11_4bvq3")
+texture_pressed = ExtResource("12_kep84")
+action = "Dash"
+visibility_mode = 1
+
+[node name="EscapeTouchScreenButton" type="TouchScreenButton" parent="UI/ControlsControl"]
+position = Vector2(4, 4)
+scale = Vector2(0.125, 0.125)
+texture_normal = ExtResource("13_37x6q")
+texture_pressed = ExtResource("14_5m0tk")
+action = "ui_cancel"
+visibility_mode = 1
+
+[node name="F2TouchScreenButton" type="TouchScreenButton" parent="UI/ControlsControl"]
+visible = false
+position = Vector2(36, 4)
+scale = Vector2(0.125, 0.125)
+texture_normal = ExtResource("15_swipb")
+texture_pressed = ExtResource("16_uoe50")
+action = "F2_action"
+visibility_mode = 1
+
+[node name="Virtual Joystick" parent="UI/ControlsControl" instance=ExtResource("7_runtc")]
+layout_mode = 1
+offset_left = -18.0
+offset_top = 118.0
+offset_right = 164.0
+offset_bottom = 277.0
+deadzone_size = 15.0
+clampzone_size = 40.0
+joystick_mode = 1
+visibility_mode = 1
+action_left = "Left"
+action_right = "Right"
+action_up = "Up"
+action_down = "Down"
+
+[node name="Base" parent="UI/ControlsControl/Virtual Joystick" index="0"]
+self_modulate = Color(1, 1, 1, 0.4)
+offset_left = -14.5
+offset_top = -16.5
+offset_right = 18.5
+offset_bottom = 18.5
+pivot_offset = Vector2(25, 25)
+expand_mode = 1
+stretch_mode = 0
+
+[node name="Tip" parent="UI/ControlsControl/Virtual Joystick/Base" index="0"]
+offset_left = -12.5
+offset_top = -12.5
+offset_right = 12.5
+offset_bottom = 12.5
+pivot_offset = Vector2(12.5, 12.5)
+expand_mode = 1
+stretch_mode = 0
+
 [node name="MainMusicPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("7_2dbhx")
 volume_db = -6.0
@@ -332,4 +464,8 @@ volume_db = -2.0
 
 [node name="HTTPRequest" type="HTTPRequest" parent="."]
 
+[connection signal="gui_input" from="UI/Minimap/Background" to="UI/MapWindow" method="_on_minimap_gui_input"]
+[connection signal="gui_input" from="UI/MapWindow" to="UI/MapWindow" method="_on_minimap_gui_input"]
 [connection signal="timeout" from="UI/RewindTimer_HBoxContainer/RewindTimer" to="." method="_on_rewind_timer_timeout"]
+
+[editable path="UI/ControlsControl/Virtual Joystick"]

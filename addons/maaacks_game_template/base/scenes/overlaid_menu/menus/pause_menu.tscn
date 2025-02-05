@@ -27,7 +27,7 @@ text = "Resume"
 [node name="RestartButton" type="Button" parent="MenuPanelContainer/MarginContainer/BoxContainer/MenuButtonsMargin/MenuButtons" index="1"]
 custom_minimum_size = Vector2(128, 40)
 layout_mode = 2
-text = "Restart"
+text = "Self-destruct"
 
 [node name="OptionsButton" type="Button" parent="MenuPanelContainer/MarginContainer/BoxContainer/MenuButtonsMargin/MenuButtons" index="2"]
 unique_name_in_owner = true
@@ -50,7 +50,7 @@ text = "Exit Game"
 [node name="ConfirmRestart" type="ConfirmationDialog" parent="." index="2"]
 unique_name_in_owner = true
 auto_translate_mode = 1
-dialog_text = "Restart the game?"
+dialog_text = "Skip to next loop?"
 
 [node name="ConfirmMainMenu" type="ConfirmationDialog" parent="." index="3"]
 unique_name_in_owner = true

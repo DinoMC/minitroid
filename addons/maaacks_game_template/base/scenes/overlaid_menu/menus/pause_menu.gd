@@ -64,7 +64,11 @@ func _on_exit_button_pressed():
 	popup_open = %ConfirmExit
 
 func _on_confirm_restart_confirmed():
-	SceneLoader.reload_current_scene()
+	#SceneLoader.reload_current_scene()
+	#close()
+	var rewindtimer = get_tree().get_first_node_in_group("rewind_timer")
+	rewindtimer.start(0.05)
+	rewindtimer.paused = false
 	close()
 
 func _on_confirm_main_menu_confirmed():

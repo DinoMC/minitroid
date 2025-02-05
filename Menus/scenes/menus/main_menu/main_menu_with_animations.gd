@@ -41,6 +41,14 @@ func _ready():
 	super._ready()
 	animation_state_machine = $MenuAnimationTree.get("parameters/playback")
 
+	if OS.has_feature("playdeck"):
+		JavaScriptBridge.eval("
+			const parent = window.parent.window;
+			parent.postMessage({ playdeck: { method: 'loading' } }, '*');
+			setTimeout(() => {
+				parent.postMessage({ playdeck: { method: 'loading', value: 100 } }, '*');
+			}, 100);")
+
 	if GlobalVars.first_launch:
 		var uuid = preload("res://addons/uuidv5/v5.gd")
 	

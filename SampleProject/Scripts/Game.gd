@@ -293,6 +293,8 @@ var challenge_ids = {
 func complete_challenge(itemname: String) -> void:
 	if !itemname in challenge_ids: return
 	#$Background/Score2.text = "Current objective: Die"
+	if $HTTPRequest.request_completed.is_connected(_on_challenge_complete):
+		$HTTPRequest.request_completed.disconnect(_on_challenge_complete)
 	$HTTPRequest.request_completed.connect(_on_challenge_complete.bind(itemname))
 	$HTTPRequest.request("https://api.whalepass.gg/players/"+GlobalVars.playerid+"/progress/challenge", ["X-API-KEY: 23163dc17d9143f86412f936605d1224", "Content-Type: application/json", "X-Battlepass-Id: e0da1a47-65b9-4b8f-a6f3-b6cf3ac4a9b7"], 2, JSON.stringify({"gameId" : "51bea481-def4-415b-9d72-205fc0785a76", "challengeId" : challenge_ids[itemname]}) )
 

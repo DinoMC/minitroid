@@ -15,7 +15,7 @@ metroidvania_system/settings_file="res://SampleProject/Resources/Settings.tres"
 [application]
 
 config/name="Minitroid"
-config/version="0.4.0"
+config/version="0.5.0"
 config/tags=PackedStringArray("addon")
 run/main_scene="res://Menus/scenes/opening/opening_with_logo.tscn"
 config/features=PackedStringArray("4.3")

@@ -2,9 +2,9 @@
 
 [ext_resource type="PackedScene" uid="uid://bsg0351mx3b4u" path="res://addons/MetroidvaniaSystem/Nodes/RoomInstance.tscn" id="1_brb8f"]
 [ext_resource type="TileSet" uid="uid://cvsgbkkxhvbda" path="res://art/textures/main_tileset.tres" id="2_ybf2f"]
+[ext_resource type="Texture2D" uid="uid://dh8flqntixruu" path="res://art/sprites/sand_canister.png" id="3_uvgvd"]
 [ext_resource type="Script" path="res://scene_templates/scripts/item_pickup_area_2d.gd" id="3_v7cwj"]
 [ext_resource type="AudioStream" uid="uid://bupku5idhqh5d" path="res://art/sounds/PowerUp02.wav" id="4_3covd"]
-[ext_resource type="Texture2D" uid="uid://bd6a54d8cx0o2" path="res://art/sprites/items/Sticky Note.png" id="4_pjkge"]
 [ext_resource type="Texture2D" uid="uid://euq8wyl5ylho" path="res://art/textures/Door_Open_Animation.png" id="5_x2byg"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_y8cqe"]
@@ -37,8 +37,9 @@ script = ExtResource("3_v7cwj")
 item_name = "sandcanister_one"
 
 [node name="Sprite2D" type="Sprite2D" parent="ItemPickup_Area2D"]
-position = Vector2(2, -2)
-texture = ExtResource("4_pjkge")
+position = Vector2(4, 0)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("3_uvgvd")
 centered = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ItemPickup_Area2D"]

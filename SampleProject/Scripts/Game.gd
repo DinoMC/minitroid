@@ -134,6 +134,18 @@ func _ready() -> void:
 			player.abilities.append("won")
 		
 		#$UI/RewindTimer_HBoxContainer/RewindTimer.start(5999)
+		
+	if OS.has_feature("avax"):
+		challenge_ids = {
+"blaster":"fafdbb78-0cd5-4229-bd9e-c1e769b9a005",
+"doorcode":"66dd943f-0bb5-492b-a855-5e16b36b558b",
+"dash":"e4e014c5-dd8d-494e-80ad-ec200f64bf8b",
+"heatresist":"3e4f2aba-c4f3-42bb-9be1-2b8c42108371",
+"sandcanister_done_1":"13a330ce-d968-48a8-b97f-09b8c044c5dc",
+"sandcanister_done_2":"27a3e3ad-4d57-48ee-8d5c-fc78b2b553fb",
+"walljump":"2f093654-f1d2-4a5c-a7ba-f8b1ac28a385",
+"win_code":"86cc7c68-7859-4086-a440-140479193abd"
+}
 
 # Returns this node from anywhere.
 static func get_singleton() -> Game:
@@ -263,7 +275,6 @@ func stop_music_animated() -> void:
 func start_music_reversed() -> void:
 	target2.pitch_scale = 0.01
 	target2.play(time)
-	print("test "+str(time))
 	var tween = get_tree().create_tween()
 	tween.tween_property(target2, "pitch_scale", 1.0, 1.0)
 		
@@ -296,7 +307,10 @@ func complete_challenge(itemname: String) -> void:
 	if $HTTPRequest.request_completed.is_connected(_on_challenge_complete):
 		$HTTPRequest.request_completed.disconnect(_on_challenge_complete)
 	$HTTPRequest.request_completed.connect(_on_challenge_complete.bind(itemname))
-	$HTTPRequest.request("https://api.whalepass.gg/players/"+GlobalVars.playerid+"/progress/challenge", ["X-API-KEY: 23163dc17d9143f86412f936605d1224", "Content-Type: application/json", "X-Battlepass-Id: e0da1a47-65b9-4b8f-a6f3-b6cf3ac4a9b7"], 2, JSON.stringify({"gameId" : "51bea481-def4-415b-9d72-205fc0785a76", "challengeId" : challenge_ids[itemname]}) )
+	if OS.has_feature("avax"):
+		$HTTPRequest.request("https://api.whalepass.gg/players/"+GlobalVars.playerid+"/progress/challenge", ["X-API-KEY: 23163dc17d9143f86412f936605d1224", "Content-Type: application/json", "X-Battlepass-Id: 33d3615d-c7d3-4d16-adce-2d53e5cfb00d"], 2, JSON.stringify({"gameId" : "8709dd77-9dab-443b-9264-6757ca96f440", "challengeId" : challenge_ids[itemname]}) )
+	else:
+		$HTTPRequest.request("https://api.whalepass.gg/players/"+GlobalVars.playerid+"/progress/challenge", ["X-API-KEY: 23163dc17d9143f86412f936605d1224", "Content-Type: application/json", "X-Battlepass-Id: e0da1a47-65b9-4b8f-a6f3-b6cf3ac4a9b7"], 2, JSON.stringify({"gameId" : "51bea481-def4-415b-9d72-205fc0785a76", "challengeId" : challenge_ids[itemname]}) )		
 
 func _on_challenge_complete(result, code, headers, body, itemname: String) -> void:
 	if code==200:

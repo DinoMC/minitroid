@@ -55,7 +55,10 @@ func _ready():
 		if not FileAccess.file_exists("user://savegame.save"):
 			tempplayerid = uuid.v5(str(Time.get_unix_time_from_system()), str(randi()))
 			$HTTPRequest.request_completed.connect(_on_request_completed)
-			$HTTPRequest.request("https://api.whalepass.gg/enrollments", ["X-API-KEY: 23163dc17d9143f86412f936605d1224", "Content-Type: application/json"], 2, JSON.stringify({"gameId" : "51bea481-def4-415b-9d72-205fc0785a76", "playerId" : tempplayerid}) )
+			if OS.has_feature("avax"):
+				$HTTPRequest.request("https://api.whalepass.gg/enrollments", ["X-API-KEY: 23163dc17d9143f86412f936605d1224", "Content-Type: application/json"], 2, JSON.stringify({"gameId" : "8709dd77-9dab-443b-9264-6757ca96f440", "playerId" : tempplayerid}) )
+			else:
+				$HTTPRequest.request("https://api.whalepass.gg/enrollments", ["X-API-KEY: 23163dc17d9143f86412f936605d1224", "Content-Type: application/json"], 2, JSON.stringify({"gameId" : "51bea481-def4-415b-9d72-205fc0785a76", "playerId" : tempplayerid}) )
 		else:
 			var save_file = FileAccess.open("user://savegame.save", FileAccess.READ)
 			while save_file.get_position() < save_file.get_length():
@@ -74,7 +77,10 @@ func _ready():
 					%ConnectButton.text = "Display
 Account"
 				$HTTPRequest.request_completed.connect(_on_request_completed)
-				$HTTPRequest.request("https://api.whalepass.gg/enrollments", ["X-API-KEY: 23163dc17d9143f86412f936605d1224", "Content-Type: application/json"], 2, JSON.stringify({"gameId" : "51bea481-def4-415b-9d72-205fc0785a76", "playerId" : tempplayerid}) )
+				if OS.has_feature("avax"):
+					$HTTPRequest.request("https://api.whalepass.gg/enrollments", ["X-API-KEY: 23163dc17d9143f86412f936605d1224", "Content-Type: application/json"], 2, JSON.stringify({"gameId" : "8709dd77-9dab-443b-9264-6757ca96f440", "playerId" : tempplayerid}) )
+				else:
+					$HTTPRequest.request("https://api.whalepass.gg/enrollments", ["X-API-KEY: 23163dc17d9143f86412f936605d1224", "Content-Type: application/json"], 2, JSON.stringify({"gameId" : "51bea481-def4-415b-9d72-205fc0785a76", "playerId" : tempplayerid}) )
 	else:
 		enable_buttons()
 
@@ -95,7 +101,10 @@ Account"
 
 func _on_connect_button_pressed() -> void:
 	$HTTPRequest2.request_completed.connect(_on_redirect_completed)
-	$HTTPRequest2.request("https://api.whalepass.gg/players/"+GlobalVars.playerid+"/redirect?gameId=51bea481-def4-415b-9d72-205fc0785a76", ["X-API-KEY: 23163dc17d9143f86412f936605d1224", "X-Battlepass-Id: e0da1a47-65b9-4b8f-a6f3-b6cf3ac4a9b7"], 0 )
+	if OS.has_feature("avax"):
+		$HTTPRequest2.request("https://api.whalepass.gg/players/"+GlobalVars.playerid+"/redirect?gameId=8709dd77-9dab-443b-9264-6757ca96f440", ["X-API-KEY: 23163dc17d9143f86412f936605d1224", "X-Battlepass-Id: 33d3615d-c7d3-4d16-adce-2d53e5cfb00d"], 0 )
+	else:
+		$HTTPRequest2.request("https://api.whalepass.gg/players/"+GlobalVars.playerid+"/redirect?gameId=51bea481-def4-415b-9d72-205fc0785a76", ["X-API-KEY: 23163dc17d9143f86412f936605d1224", "X-Battlepass-Id: e0da1a47-65b9-4b8f-a6f3-b6cf3ac4a9b7"], 0 )
 	
 func _on_redirect_completed(result, code, headers, body) -> void:
 	if code == 200:
@@ -104,7 +113,10 @@ func _on_redirect_completed(result, code, headers, body) -> void:
 
 func check_inventory() -> void:
 	$HTTPRequest3.request_completed.connect(_on_inventory_check_completed)
-	$HTTPRequest3.request("https://api.whalepass.gg/players/"+GlobalVars.playerid+"/inventory?gameId=51bea481-def4-415b-9d72-205fc0785a76", ["X-API-KEY: 23163dc17d9143f86412f936605d1224", "X-Battlepass-Id: e0da1a47-65b9-4b8f-a6f3-b6cf3ac4a9b7"], 0 )
+	if OS.has_feature("avax"):
+		$HTTPRequest3.request("https://api.whalepass.gg/players/"+GlobalVars.playerid+"/inventory?gameId=8709dd77-9dab-443b-9264-6757ca96f440", ["X-API-KEY: 23163dc17d9143f86412f936605d1224", "X-Battlepass-Id: 33d3615d-c7d3-4d16-adce-2d53e5cfb00d"], 0 )
+	else:
+		$HTTPRequest3.request("https://api.whalepass.gg/players/"+GlobalVars.playerid+"/inventory?gameId=51bea481-def4-415b-9d72-205fc0785a76", ["X-API-KEY: 23163dc17d9143f86412f936605d1224", "X-Battlepass-Id: e0da1a47-65b9-4b8f-a6f3-b6cf3ac4a9b7"], 0 )
 	
 func _on_inventory_check_completed(result, code, headers, body) -> void:
 	#TODO : check best bracelet in list and set Strength
